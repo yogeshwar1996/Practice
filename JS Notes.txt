@@ -1,0 +1,3042 @@
+Javascript Introduction
+#######################
+* Dynamic, weakly typed programming language.
+* Dynamically-typed languages are those (like JavaScript) where the interpreter
+  assigns variables a type at runtime based on the variable's value at the time.
+* Interpreted language - on the fly compiled language
+* Hosted language the runs in different environments (eg in browser).
+* Its most prominent use case is to run code in a browser on a webpage.
+
+How is JavaScript executed
+* You write a code which you want to run on a browser.
+  For that you need javascript engine. this is present in the browser itself
+  For chrome its v8, in firefox its spidermonkey
+* Job of the engine is to parse read and understand the code
+  and then it compiles it on the fly to machine code as it executes faster and it executes machine code.
+  All of this happens inside the browser on a single thread
+
+Dynamically, Interpred Programming language 
+* Not pre-compiled rather parsed and compiled "on the fly" (eg in the browser)
+* Code is evaluated and executed at runtime
+* Code can change at runtime (eg type of a variable)
+
+Weakly type
+* While writting the code you dont have to declare the data types, rather they are assumed automatically
+* You dont have to define that some variable has to hold some value
+
+
+Javascript runs on a host environment
+* It can be a browser. There it can manitpulate HTML, CSS, send HTTP requests etc. 
+  But javascript cannot access the local filesystem or interact with the operating system
+* It can be a server. Google's Javascript Engine v8 was extracted to create Node.js to
+  run javascript on a server. Hence we can build web backends using javascript.
+  Node.js can access the local filesystem and interact with the operating system.
+  It does not have access to a loaded webpage like browser side javascript. Hence it cannot
+  manitpulate HTML and CSS
+
+History
+#######
+There is an internation orgnaization ECMA which develops a language ECMAScript and defines the standard
+of languages. This is not directly used but browser vendors like Google for Chrome and Mozilla for Firefox
+implement the standards into their JS engines
+Javascript is an implementation of the standards of ECMA
+
+Adding Javascript to the website
+#################################
+Js is added using the <script> tags in one of the following ways:-
+* Method - 1 
+<html>
+  <body>
+    <script>
+      alert('Hello')
+    </script>
+  </body>
+</html>
+
+* Method - 2
+Src
+  - index.html
+  - app.js
+
+index.html
+<html>
+  <body>
+    <script src="app.js">      
+    </script>
+  </body>
+</html>
+
+app.js
+alert('Hello')
+
+Note:
+<script> tag can also be put in the <head> section of the html, which will cause it 
+to execute before the <body> section
+
+Also in js order of occurrence of the script matters so if there is a script which is pre-requisite for app.js
+It should be loaded before it
+
+Eg If vendor.js is used by app.js we mention it first
+<script src="vendor.js"></script>
+<script src="app.js"></script>
+
+Remember:
+HTML is parsed top to bottom and the javascript code within script tags or in a file also executes top to bottom
+If your scripts refer to the HTML elements then you may want the html to parse first and can keep the script tag in the end of the body section
+In another way you can still keep the script tag in the head section so that the script downloading does not wait for html to be parsed
+but should only start executing after html is parsed. 
+This can be done by adding attriubute `defer` to the script tag.
+
+
+--> In case you dont want to wait for parsing and want script to download right away but execute after parsing then you can use `defer`
+<script src="vendor.js" defer></script>
+--> In case you dont want to wait for parsing and want script to download and execute right away you can use `async`
+<script src="vendor.js" async></script>
+
+Note with defer browser gurantees the order of execution of script
+But with async th script which downloads first executes first irrespective of order
+
+defer and async work only for external scripts and not for inline scripts
+Variables and constants
+#######################
+
+* A variable is a data container which holds a value. Its defined as follows -
+let userName = 'John';
+
+Value in a variable can be changed as follows
+userName = 'Carl'
+
+* A constant is also a data container which holds a value. But that value cannot be changed.
+const uppperLimit = '100'
+
+If you try to change the value you will get an error
+
+Note:
+* We can initialize a variable using another variable or a constant.
+
+Rules for variable naming
+
+* Use camelCase
+* Javascript is case sensitive so a variable 'userName' is different from 'UserName'
+* name should contain numbers and digits only
+* Exception: variable name can start with  as well as contain $, _ symbol
+ eg. $userName, user_Name, userName$, userName_ are valid names
+* Names cannot start with a digit. So 21Century is an invalid name
+
+Why we need variables?
+Variables can store data that may change during program execution.
+So hard-coding (as in the second snippet) isn't always an option.
+Additionally, the same value might be needed in multiple places.
+Using a variable allows you to refer to that variable and only change the value in one place
+(i.e the variable) instead of multiple places in code.
+
+
+Shadowed Variables - 
+When we have a variabel in the global scope and a same variable in local scope of a function
+There both co-exist and do not interfere. This is called variable shadowing
+Eg
+let userName = 'Max';
+function greetUser(name) {
+  let userName = name;
+  alert(userName);
+}
+userName = 'Manu';
+greetUser('Max');
+
+Here in the alert whill show `Max`
+
+When referring to userName inside of the greetUser function we now always refer to the local,
+shadowed variable. Only if no such local variable existed, JavaScript would fall back to the global variable.
+
+Data types
+##########
+Numbers: 1, -1, 1.212
+Note: if you want to round off a number to upto certain decimals you can use toFixed() method
+eg o = 32.34912
+o.toFixed(2)
+=> 32.35
+
+Strings: 'Hi', "Hi", `Hi`
+Note using backticks `` we can do the following
+
+let a = 1, b = 2;
+let sum = a + b
+
+`${sum} is the result of adding ${a} and ${b}`
+
+It will result into a string a follows: 
+`3 is the result of adding 1 and 2`
+
+
+<<<Type Conversions>>>
+######################
+Note the value retreived from an input is always a string even though you define input as number
+Eg <input type='number'> 
+let inputEl = document.querySelector('input');
+let enteredValue = inputEl.value;
+// here enteredValue will be by default string to convert it to number we can do following
+// Method1: adding a `+` before the string converts it to the number
+let numberEneterd = +enteredValue
+// Method2: parseInt() this returns the integer 
+parseInt('12') => 12
+parseInt('12.12') => 12
+// Method3: parseFloat() this returns the floating decimal number
+parseFloat('12.12') => 12.12
+parseFloat('12') => 12
+
+Similarly to convert a value to string we can do
+let value = 12;
+stringValue = value.toString();
+
+Note: when a string extra has white spaces the browser does not render them all. 
+Instead only 1 whitespace is renderd. To ensure the white spaces are rendered as is.
+You have to add styling {'white-space': pre} to the html tag rendering that string
+To add line-break in a string you can do the following
+'My name is Karl.\n I live is London'
+
+undefined - It is the default value of the uninitialized Variables
+null - It is not the default value of the uninitialized Variables but has to be explicitly set in order to use it.
+       It means no value assigned.
+NaN stands for not a number
+
+Functions
+#########
+In javascript functions can be defined even at the end of file.
+It user can call a function before its defined in the file.
+This still works because when javascript file is parsed the functions are read and moved to the top automatically
+before they are executed
+
+Operators
+== Checks value equality
+=== Checks value and type equality
+
+Truthy and Falsy values
+
+ 0 -> false
+ any other number including negative numbers -> true
+ ""  (empty string) -> false
+ non empty string -> true
+ {}, [] empty object or list -> true
+ null, undefined, NaN -> false
+
+
+ ############################
+
+ alert() - used to displays a message in a dailog
+
+ prompt() - used to get user input via a dailog and returns that value
+
+ #############################
+
+ let age = chosenAge || 100
+ 
+ if chosenAge is falsy i.e 0 or null, undefined, NaN etc then age will be assigned the value 100
+ else  chosenAge value will be assigned to age
+ 
+ example
+ let chosenAge = 12
+ let age = chosenAge || null 
+
+ age will be 12
+
+let userName
+let name = userName && 'Anna'
+since userName is falsy the userName value is returned
+name is undefined
+
+let userName = 'Max'
+let name = userName && 'Anna'
+since userName is truthy the second value 'Anna' is returned
+name is 'Anna'
+
+#########################################################
+Loops
+
+Method1
+for(let i=0; i < 5; i++) {
+  console.log(i)
+}
+
+Method2
+for (const el of array){
+  console.log(el)
+}
+   
+Method3
+for (const key in obj) {
+  console.log(key)
+  console.log(obj[key])
+}
+
+Method4
+isValid = true;
+while(isValid) {
+  ...
+  ...
+  if(Math.random()>0.5){
+    isValid=false
+  }
+}
+
+Method 5
+let j = 0;
+do {
+  ....
+  j++;
+} while (j < 100)
+
+##################################
+break and continue statements
+
+when you want to stop looping use break
+
+for (let i = 0; i < 10; i++) {
+  if(i==5){
+    break
+  }
+  console.log(i)
+}
+It will print 0 1 2 3 4 and exist
+
+
+for (let i = 0; i < 10; i++) {
+  if(i==5){
+    continue
+  }
+  console.log(i)
+}
+It will print 0 1 2 3 4 6 7 8 9
+It will skip loop at i == 5
+
+**Using labeled statemnt to break outer loop**
+let j = 0;
+
+outerLoop: do {
+  console.log('Outer', j)
+  innerLoop: for(let i = 0; i < 5; i++){
+    if(i==3){
+      break outerLoop;
+    }
+    console.log('Inner', i)
+  }
+  j++
+}while (j<3)
+
+Here we can define label for outer and inner loop 
+and then mention that label to the break statement
+
+Note: this can also be used with `continue`
+
+################################################
+
+var v/s let v/s const
+
+let name = 'Max'
+let name = 'Mandy'
+
+It will raise error that name is already declared
+but this will not giving error
+
+var name = 'Max'
+var name = 'Mandy'
+
+
+-----Script start----
+let name = 'Max'
+
+if(name) {
+  var hobbies = ['running', 'badminton']
+  let games = ['kho-kho', 'kite flying']
+}
+
+function sum() {
+ console.log("Inside sum function")
+ console.log('Name', name)
+ console.log('hobbbies', hobbies)
+ console.log('games', games) // this will give error as games is defined in the scope of if block
+ return 2 + 3;
+}
+
+sum()
+
+console.log("Outiside")
+console.log('Name', name)
+console.log('hobbbies', hobbies)
+console.log('games', games) // This will give error 
+
+------Script end-------
+
+---Script start-----
+
+console.log(name) // This will print undefined
+var name = 'Max'
+
+console.log(user) //This will give error
+let user = 'Cindy' 
+
+################################
+Parameters - are these variables which you specify between parentheses when defining a function.
+----------
+function sayHi(name) { ... } 
+Here name is a parameter
+
+Arguments then are the concrete values you pass to a function when calling that function
+---------
+sayHi('Arjun') // Here 'Arjun' is the argument
+
+################################
+Functions
+Method1 - Function Declaration
+function mulitply(a, b) {
+  return a*b;
+}
+
+When declared like this we can put declaration even after user
+
+Method2 - Function Expression
+const multiply = function(a,b) {
+  return a*b;
+}
+
+Here it the declaration should always occur before use
+
+Arrow / Lambda / Inline functions 
+---------------
+Method1: General Syntax 
+(param1, param2) => {
+  let c = param1 * 10;
+  let result = c + param2;
+  return result;
+}
+
+Method 2: If no parameters - empty pair of parantheses is required ()
+() => {}
+
+Method3: If exactly 1 parameter - parantheses can be omitted
+param1 => {}
+
+Method4: if exactly one expression in the function body, curly braces can be omitted and result of expression is returned
+(param1, param2) => param1 + param2
+
+Method5: If function returns an object
+pName => ({name: pName });
+
+
+Default Arguments
+------------------
+Consider the function
+function sum(a,b) {return a+b;}
+
+Calling it like this sum(10) will not give any error
+Here b will assigned the value `undefined` and result of 10 + undefined i.e NaN will be returned
+
+We can also defined a default value for b as follows
+function sum(a, b=90) {return a+b;}
+then if we call sum(10) it will return 100
+
+Note if we call it like this sum(10, undefined) then also value returned will be 100
+When argument passed is undefined the default argument gets used.
+
+Rest Operator
+--------------
+
+When you have a function that expects a lot of arguments all those arguments can be collected as follows
+
+function sum(...numbers) {
+
+}
+and you can call the function like this
+sum(1,2,10,-1,-29,391,392,32,83);
+Here all the arugments will get collected/merged into an array `numbers`
+
+Note if you dont want some arguments to be collected you can define the parameters as follows
+function sum(a,b, ...numbers) {
+
+} 
+then calling sum(1,2,10,-1,-29,391,392,32,83); will result in a=1 b=2 and numbers = [10,-1,-29,391,392,32,83]
+There is also an alternative to using rest operator which works for functions declared with `function` keyword
+
+eg const sum = function (){
+  console.log("Arguemnts", arguments)
+}
+
+sum(1,2,3,-1,9)
+Here arguments is a special keywords which will have array like object holding all the arguments passed to the function
+
+Defining functions inside other functions
+-----------------------------------------
+
+const add = function(...numbers) {
+  let sum=0;
+  const validateNumber = function(number){
+    return isNaN(number) ? 0: number;
+  }
+  for (const num of numbers){
+    sum += validateNumber(num)
+  }
+  return sum;
+}
+
+Here we have defined validateNumber function inside the add function and 
+due to the block scope it can only be used inside the add function
+
+Passing function as an argument
+
+function addition(resultHandler, ...numbers) {
+  let sum = 0;
+  for (const num of numbers){
+    sum+=num
+  }
+  resultHandler(sum)
+}
+
+const showResult = (result) => { alert('The result is' + result); }
+
+and then we can call addition as follows
+addition(showResult, 1,2,3,-2,13)
+
+
+############
+.bind()
+############
+This comes to use when you want to pre-configure a function's arguments when you are not calling the function on your own
+There are scenarios where you want to pass arguments to a function without actually calling the function
+To pass arguments to function without calling them we can use .bind()
+Consider the following code
+
+function addUp(callbackfn, ...numbers) {
+  let sum = 0;
+  for(const num of numbers){
+    sum += num
+  }
+
+  callbackfn(sum)
+}
+
+function showResult(message, result) {
+  alert(`$(message) : ${result}`)
+}
+
+Here the function addUp has 2 parameters 
+1. callbackfn  - which is a function that gets called inside the addUp function
+2. numbers - its a rest operator which collects all the arguments passed to the function after callbackfn argument
+
+Now lets say we call addUp as follows - addUp(showResult, 1,2,-1,-2,10)
+then upon execution when callbackfn(sum) will be called 
+the showResult(sum) will get called 
+since showResult expects two arguments ie. message, result 
+and only `sum` was passed
+message will be assigned the value of sum
+result will be undefined
+
+Now to fix this up we can use .bind() in function call to addUp as follows
+addUp(showResult.bind(this, 'Result of addition'), 1, 2, -1,-2,10)
+What happens now is that when addUp executes and callbackfn(sum) is called
+since we passed showResult.bind(this, 'Result of addition') as the value  of callbackfn                 
+and showResult expects two arguments ie. message, result 
+The argument we passed with the .bind() after `this` keyword 
+will be passed to the parameter `message` of showResult function
+and argument sum will be passed to the result parameter of the showResult function
+
+the execution callbackfn(sum) 
+              --------------
+will behind the scenes change to
+showResult.bind(this, 'Result of addition')(sum)
+-----------------------------------------------
+which will behave like -
+showResult('Result of addition', sum)
+------------------------------------
+
+
+############################
+DOM (Document Object Model)
+############################
+Its is a cross-platform and language-independent interface that represents an HTML document 
+as a logical tree structure and provides methods to access and manipulate the document.
+Its not necessarily implemented as a tree data structure but for demonstration can be
+visualised as a tree wherein every element is a node and each node contains objects.
+
+* A document is a document node.
+* All HTML elements are element nodes.
+* All HTML attributes are attribute nodes.
+* Text inserted into HTML elements are text nodes.
+* Comments are comment nodes.
+
+Nodes can have event handlers attached to them. Once an event is triggered, the event handlers get executed.
+DOM has methods with which programmers can create and build documents, navigate their structure, and add, modify, or delete elements, styles and content.
+
+###############
+document object - Its a global object which exposes the root DOM node
+###############
+Properties of document object are as follows:
+---------------------------------------------
+* activeElement: It returns the currently active elements in the document.
+
+* body: It returns the contents of the body element.
+
+* anchors: It returns all <a> elements that have a name attribute.
+
+* baseURI: It returns a string value that represents the base URI of the document.
+
+* cookie: It returns the cookie of the current document.
+
+* charSet: It returns a string, representing the document’s character encoding.
+
+* defaultView: It returns the current Window Object.
+
+* designMode: It is used to set documents as editable or read-only.
+
+* domain: It returns the domain name of the document server.
+
+* doctype: It returns the document’s doctype.
+
+* embeds: It returns the collection of all embedded elements.
+
+* URL: It returns the complete URL of the document.
+
+* forms: It returns all the elements of the form.
+
+* fullScreenElement: It returns the element that is currently present in full-screen mode.
+
+* title: It returns the title element of the document.
+
+* head: It returns the head element of the document.
+
+* links: It returns all <area> and <a> elements that have a href attribute.
+
+* lastModified: It returns the date and time of the current document that was last modified.
+
+* images: It returns the collection of <img> elements in the document.
+
+* implementation: It returns the DOMImplementation object associated with the current document.
+
+* readyState: It returns the loading status of the current document.
+
+* referrer: It returns the URI of the page that is linked to the current page.
+
+* scripts: It returns all script elements present in the document.
+
+* strictErrorChecking: It sets or returns whether strict error checking can be enforced on a document or not.
+
+Methods of document object: 
+---------------------------
+* addEventListener(): It is used to attach an event handler to the specified element.
+
+* adoptNode(): It is used to adopt a node from another document and it returns a node object, representing the adopted node.
+
+* close(): It is used to close the output stream.
+
+* createAttribute(): It is used to create an attribute node with the specified name and returns the attribute object.
+
+* createComment(): It is used to create a comment node with some text.
+
+* createDocumentFragment(): It is used to create the document fragment to change the content of the document.
+
+* createElement(): It is used to create HTML element .
+
+* createEvent(): It is used to create a new events object.
+
+* createTextNode(): It is used to create a textnode.
+
+* execCommand(): It is used to execute a command specified by the user on the editable selected section. It returns a Boolean value.
+
+* fullscreenEnabled(): It is used to check whether the document can be viewed in fullscreen mode or not. It returns a boolean value.
+
+* getElementById(): It returns the object of the given ID. If no object with that id exists then it returns null.
+
+* getElementsByClassName(): It returns an object containing all the elements with the specified class names in the document as objects.
+
+* getElementsByName(): It returns an object containing all the elements with the specified name in the document as objects.
+
+* getElementsByTagName(): It returns an object containing all the elements with the specified tag names in the document as objects.
+
+* hasFocus(): It returns a boolean value that indicates whether the document or element has focus or not.
+
+* importNode(): It imports the copy of a node from another document in the current document.
+
+* normalize(): It flushes out the empty nodes and merges the adjacent text nodes with the first text node and
+
+* normalizeDocument(): It is used to normalize an HTML document by removing any empty text nodes and joining the adjacent text nodes.
+
+* open(): It is used to open the output stream to collect the output.
+
+* querySelector(): It returns the first element that matches a specified CSS selector(s) in the document.
+
+* querySelectorAll(): It returns a collection of an element’s child elements that matches a specified CSS selector(s) in the document
+
+* removeEventListener(): It removes the event handler from an element that has an attached event.
+
+* renameNode(): It is used to rename the node.
+
+* write(): It is used to write some content or javascript code in the document.
+
+* writeln(): It is used to write a document with a newline character after each statement.
+
+##############
+window object - The window object is the topmost object of the DOM hierarchy.
+#############   It represents a browser window or frame that displays the contents of the webpage
+Properties of the window:
+
+Closed: It holds a Boolean value that represents whether the window is closed or not.
+console: It returns a reference to the console object which provides access to the browser’s debugging console.
+defaultStatus: It is used to define the default message that will be displayed in the status bar when no activity is carried on by the browser.
+controllers: It returns the XUL controller objects for the current Chrome window.
+customElements: It returns a reference to the CustomElementRegistry object, which can be used to register new custom elements and also get information about already registered custom elements.
+crypto: It returns the browser crypto object.
+devicePixelRatio: It returns the ratio between physical pixels and device-independent pixels in the current display.
+Document: It returns a reference to the document object of that window.
+DOMMatrix: It returns a reference to a DOMMatrix object, which represents 4×4 matrices, suitable for 2D and 3D operations.
+frames[]: It represents an array that contains all the frames of a given window.
+DOMPoint: It returns a reference to a DOMPoint object, which represents a 2D or 3D point in a coordinate system.
+History: It provides information on the URLs visited in the current window.
+Length: It represents the number of frames in the current window.
+DOMRect: It returns a reference to a DOMRect object, which represents a rectangle.
+fullScreen: This property indicates whether the window is displayed on full screen or not.
+Location: It contains the URL of the current window.
+innerHeight: It is used to get the height of the content area of the browser window.
+innerWidth: It is used to get the width of the content area of the browser window.
+Name: It contains the name of the referenced window.
+Window: It returns the current window or frame.
+Navigator: It returns a reference to the navigator object.
+outerHeight: It will get the height of the outside of the browser window.
+outerWidth: It will get the width of the outside of the browser window.
+Status: It overrides the default status and places a message in the status bar.
+Top: It returns a reference to the topmost window containing a frame if many windows are opened.
+Toolbar: It will result in the toolbar object, whose visibility can be toggled in the window.
+Opener: It contains a reference to the window that opened the current window.
+Parent: It refers to the frameset in which the current frame is contained.
+Screen: It refers to the screen object
+Self: It provides another way to refer to the current window.
+
+The methods of Window objects that are commonly used are listed in the below table:
+
+alert(): It is used to display an alert box. It displays a specified message along with an OK button and is generally used to make sure that the information comes through the user.
+atob(): It is used for decoding a base-64 encoded string. It is used to decode a string of data that has been encoded using the btoa() method.
+blur(): It is used to remove focus from the current window.
+btoa(): It is used for encoding a string in base-64 format.
+clearInterval(): It clears the interval which has been set by the setInterval() function before that.
+clearTimeout(): It clears the timeout which has been set by the setTimeout()function before that.
+close(): It is used for closing a certain window or tab of the browser which was previously opened.
+confirm(): It is used to display a modal dialog with an optional message and two buttons i.e. OK and Cancel. It returns true if the user clicks “OK”, and false otherwise.
+focus(): It is used to give focus to an element in the current window.
+getComputedStyle(): It is used to get all the computed CSS properties and values of the specified element.
+getSelection(): It returns a Selection object representing the range of text selected by the user
+matchMedia(): It is used to return a MediaQueryList object which represents the result of the specified CSS media query string.
+open(): It is used to open a new tab or window with the specified URL and name.
+moveBy(): It is used for moving a window with a specified number of pixels relative to its current coordinates.
+moveTo(): It is used in the window to move the window from the left and top coordinates.
+prompt(): It is used to display a dialog with an optional message prompting the user to input some text
+resizeBy(): It is used to resize a window by the specified amount.
+resizeTo(): It is used to resize a window to the specified width and height.
+scrollBy(): It is used to scroll the document by the given number of pixels.
+scrollTo(): It is used to scroll to a particular set of coordinates in the document.
+setInterval(): It repeats a given function at every given time interval.
+setTimeout(): It executes a function, after waiting a specified number of milliseconds.
+stop(): It is used to stop the window from loading resources in the current browsing context.
+
+###################
+Nodes v/s Elements
+###################
+Nodes are the objects that make up DOM
+HTML tags are element nodes also called just elements
+Text creates text nodes
+Attributes create attribute nodes
+Elements are just one type of nodes
+
+#######################################
+Querying elements / Selecting elememts
+#######################################
+To get a single element available functions are
+* querySelector
+* getElementById
+
+To select multiple elements available functions are
+* querySelectorAll
+* getElementsByTagName
+
+document.querySelector(<CSS selector>);
+---------------------------------------
+Takes any CSS selector (e.g. '#some-id', '.some-class' or 'div p.some-class')
+and returns the first (!) matching element in the DOM.
+Returns null if no matching element could be found.
+
+document.getElementById(<ID>);
+------------------------------
+Takes an ID (without #, just the id name) and returns the element that has this id.
+Since the same ID shouldn't occur more than once on your page,
+it'll always return exactly that one element.
+Returns null if no element with the specified ID could be found.
+
+document.querySelectorAll(<CSS selector>);
+------------------------------------------
+Takes any CSS selector (e.g. '#some-id', '.some-class' or 'div p.some-class' 
+i.e paragraph element that has class `some-class` and a div as a parent)
+and returns all matching elements in the DOM as a static (non-live) NodeList.
+Returns and empty NodeList if no matching element could be found.
+
+document.getElementsByClassName(<CSS CLASS>);
+---------------------------------------------
+Takes a CSS class g (e.g. 'some-class') and returns a live HTMLCollection of matched elements in your DOM.
+Returns an empty HTMLCollection if not matching elements were found.
+
+document.getElementsByTagName(<HTML TAG>);
+-----------------------------------------
+Takes an HTML tag (e.g. 'p') and returns a live HTMLCollection of matched elements in your DOM
+Returns an empty HTMLCollection if not matching elements were found.
+
+document.getElementsByName(name)
+--------------------------------
+A live NodeList collection, meaning it automatically updates as new elements
+with the same name are added to, or removed from, the document.
+
+
+Note
+1. An import difference b/w querySelectorAll and methods like get(<something>)by(something) like getElementsByTagName
+is that the former returns a non live nodelist i.e from the snapshot of the current DOMImplementation
+where as the latter returns a live nodelist where if a new element is added or an existing one is removed that will 
+reflect in the list
+Live Non live is different only to the extent how they behave when element is added or removed
+If the element properties are updated that will reflect in live and non live both
+
+2. To see the properties and methods available on a node one can do 
+console.dir(<node>)
+
+####################################
+Evaluating and Manipulating Elements
+####################################
+Consider a piece of HTML Code
+<p id="welcome-text" class="text-default">Welcome!</p>
+We can read it/ evaluate it using DOM by performing
+const p = document.getElementById('welcome-text')
+We can further do
+p.textContent -> to read its text content
+p.id -> to read its id
+p.className -> to read the classses on an element
+
+To manipulate this element we can change its classs as follows
+p.className = "new-class"
+
+We can also manipulate the style of an element as follows
+p.style.color = 'red'
+Note: If the style property is - seperated its changed to camelCase
+Hence for background-color we can write p.style.backgroundColor = 'blue'
+
+Note: To see the properties and methods available on a node one can do 
+console.dir(<node>)
+
+#########################
+Attributes vs Properties
+#########################
+<input id='text-input' class='input-field' value='Enter text here'/>
+
+Attributes are present in the HTML tags in the code and properties are present on the DOM object created by browser corsp to the tag 
+Note:
+Some attributes have 1:1 mapping and live sync with the property on their DOM object
+Eg id attribute and id property, change one changes the other
+
+Remeber its not always that attribute and property name will be same.
+Some attributes may be mapped to properties with different name but have live sync
+Eg class attribute is mapped to className property, change one changes the other
+
+Some atrributes are mapped to the property but the updates happen uni-directionally
+updating the attribute will update the property but not the vice - versa
+Eg. value attriubute and value property. Updating value attribute updates value property.
+But not vice versa
+Updating value property will reflect the changes in the UI but in the HTML the attribute value will not change
+So one can reset to the original value by doing
+input.value = input.getAttribute('value')
+
+
+###################
+Traversing the DOM
+###################
+From the current node one can traverse to 
+
+* Parent Node - using `parentElement` property
+* Children element nodes - using `children` property
+* First child element node - using `firstElementChild`
+* Last child element node - using `lastElementChild`
+* Previous sibling- using `previousElementSibling`
+* Next sibling - using `nextElementSibling`
+<ul>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>
+const ul = document.getElementById('ul')
+ul.children will return child element nodes which are nodes corsp to HTML tags
+ul.childNodes will return the element nodes as well as text nodes
+where text nodes are for the new line character at end of <ul> and before <li> 
+
+####################
+Styling DOM elements
+####################
+* To change style on an element for example background-color
+el.style.backgroundColor = 'red';
+
+* To change className of an element we can do
+el.className = 'class1 class2'
+* One can toggle a class on an element based on an event
+Method1 - using className
+el.addEventListener('click', () => {
+  if (el.className != 'class1 class2') {
+    el.className = 'class1 class2'
+  }else {
+    el.className = 'class1'
+  }
+})
+
+Method2 - using classList
+el.addEventListener('click', () => {
+  el.classList.toggle('class1')
+})
+
+#####################################
+Creating and inserting elements in DOM
+Method1
+one can update the HTML using
+el.innerHTML = el.innerHTML + '<p>Hello</p>'
+Note this will rerender all contents of el
+
+Method2
+To prevent that one can use
+el.insertAdjacentHTML(<position>, '<html code>')
+Following are the possible positions
+
+<!-- beforebegin -->
+<p>
+  <!-- afterbegin -->
+  foo
+  <!-- beforeend -->
+</p>
+<!-- afterend -->
+
+It will only add the new elements from the html code but not rerender the existing ones
+But you dont have direct access to the newly added elements
+For that you have to query them again
+
+Method3
+To avoid this 2 step process one can do the following
+Create the element
+const newEl = document.createElement(<tag>) eg 'div', 'ul', 'li', 'input' etc
+Add its contents
+newEl.textContent = 'hello;
+Add it to the existing element 
+el.appendChild(newEl)
+
+Methods to insert elements: 
+* To insert in the end - append() it can be used to append multiple elements to an element
+Differences from Node.appendChild():
+Element.append() allows you to also append string objects, whereas Node.appendChild() only accepts Node objects.
+Element.append() has no return value, whereas Node.appendChild() returns the appended Node object.
+Element.append() can append several nodes and strings, whereas Node.appendChild() can only append one node.
+* To insert in the begining of element - el.prepend()
+* To insert before an element- el.before()
+* To replace an element - el.replaceWith()
+* To insert after an element - el.after() Note: we can do same thing like this also - el.insertAdjacentElement('afterend', <new element>)
+
+Removing an Element
+el.remove() same can also be achieved as follows - el.parentElement.removeChild(el)
+
+
+To re-render an element one can do as follows
+el.replaceWith(el.cloneNode(true))
+This will re-render the button but the el has to be queried again for use.
+el = document.querySelector(<CSS selector>)
+
+Note this helps with getting rid  of the event listners
+Note event listeners can also removed as follows
+el.removeEventListener('<event eg click>', <eventHandler>)
+Note when event handler has a .bind() used with it removeEventListener wont work 
+because .bind() returns a new function and to remove event listner the event handler should also be same
+so re-rendering as mentioned above is useful in such scenario
+
+Note its good practice to remove existing event listners on an element before adding new ones.
+Or just add them once not again and again
+
+#######
+Arrays
+#######
+
+Data structure used to store data of any kind and length
+They are iterable where order of elements is guranteed and duplicate elements are allowed and elements can be using indices starting at 0
+We can define them as follows:
+const numbers = [1,2,3,4]
+const numbers = new Array(1,2,3,4)
+Note: When using new keyword and only 1 argument is specified for example 
+const someList = new Array(3)
+It will create an empty array of length 3
+whereas const someList = Array(5) will result in [5]
+
+Note when an array is declared, const l = []
+then l[5] = 4 will result in [empty x 5, 4] i,e [,,,,,4]
+or const l = [1,2]
+then l[5] = 4 will result in [1, 2, , , , ,4]
+
+Creating array from iterables  like string 
+const characters = Array.from("Hello")
+['H','e','l','l','o']
+
+Another use case is to convert nodeList to array
+const liNodes = document.querySelectorAll('li')
+const liNodesArray = Array.from(liNodes)
+
+accesing array elements - 
+elements in an array are indexed starting at 0
+For, const numbers = [1,2,3,4]
+To access element with value 3 you can access it using numbers[2]
+NOte: Negative indices are not supported
+
+array methods
+ - Array.isArray(<variable>)
+   Checks if the argument passed is an array or not and returns a boolean.
+   
+ - unshift() 
+   To put an element at the begining of an array
+   Eg. [1,2,3,4].unshift(10) -> [10,1,2,3,4]
+ 
+ - push()
+   To put an element in the end of an array
+   Eg. [1,2,3].push(4) -> [1,2,3,4]
+ 
+ - shift() 
+   To remove the first element of the array
+   [1,2,3,4].shift() -> [2,3,4]
+ 
+ - pop() 
+   To remove the last element of the array
+   Eg [1,2,3,4,5].pop() -> [1,2,3,4]
+ 
+ - splice() 
+   To delete elements from an array
+   Eg const i = [21,42,23,34,15,6] to remove elements 23 and 34 we can do i.splice(2,2)
+   Arg1 - index to start from. It can be negative also -1 will mean last element, -2 will mean second last and so on
+   Arg2 - no of elements to delete
+ 
+   To insert an element in an array
+   [1,2,3].splic(1,0,100) -> [1,100,2,3]
+   More items can be inserted as follows:
+   [1,2,3].splice(1,0,'Hello', 'Hi') -> [1,'Hello','Hi',]
+
+ - slice()
+   We know assigning an array to variable just passes the reference/address of that array
+   Eg. const numbers = [1,2,3,4]
+       const newNumbers = numbers
+       numbers.push(5)
+       both numbers and newNumbers will be [1,2,3,4,5]
+   When we use slice. It will return a brand new array based on current array which will be detached from the original one. 
+ 
+   It can also be used to get a subset of array
+   Eg. const n = numbers.slice(0,2) will result in [1,2] 
+   Arg1 - starting index
+   Arg2 - end index
+   Result includes items from start_index upto (end_index-1)
+   Note args can be negative indices also starting from -1 as the last element but then both the indices should be negative
+   numbers.slice(-3,-1)  will result in [2,3,4]
+   Note: If only 1 arg is given then all elements startig from that index are returned
+   Eg. numbers.slice(1) will return [2,3,4]
+    
+- concat()
+  It will merge two Arrays
+  const Array3 = Array1.concat(Array2)
+  Note: neither array1 nor array2 is affected and concat returns a new array
+
+- indexOf()
+  It will return the index of the element passed as argument
+  n = [10,20,30,40,50]
+  n.indexOf(20) will return 1
+  If the element could not be found. It will return -1.
+  Note: If there are repeating elements indexOf will return the index of first occurrence of the element
+  Note: It works well with primitive values but not with the reference values like Objects i.e {}, []
+  
+
+- lastIndexOf()
+  It will return the index of the element passed as argument.
+  It will search the elements from the end of the array
+  If the element could not be found. It will return -1.
+  Note: It works well with primitive values but not with the reference values like Objects i.e {}, []
+
+- find()
+  It is used to find an element in an array
+  It takes a function  as argument where you  define the criteria for finding the element
+    The function has 3 arguments 
+    arg1 - element
+    arg2 - index of element
+    arg3 - the array itself
+
+  The function should return true for the element you are finding
+  Eg personsData = [{name: 'Manuel'}, {name: 'John'}]
+
+  personsData.find((person, index, persons) => {
+    return person.name == 'Manuel'
+  })
+
+  will return the object {name: 'Manuel'}
+  and if you change the returned object the change will reflect in the array also
+  as the object returned by find is referencing the one inside the array.
+
+- findIndex()
+  It works exactly like find() but this method returns the index of the item found
+
+- includes()
+  To know if a value is part of an array or not
+  [1,2,3,4].includes(2) -> true
+  Note: It works well only for primitive values and not {} and []
+
+
+- forEach()
+  Used to iterate over the array elements and perform operations using each element
+  It takes a function as its argument
+  Which further has 3 arrguments: arg1 -> element, arg2 -> index, arg3 -> array itself
+  Eg prices = [100,200,300,400]
+  let newPrices = []
+  prices.forEach((price, index, prices)=>{
+    newPrices.push(price * 2)
+  })
+  newPrices - [200,400,600,800]
+
+- map()
+  It is used to create a new array while iterating and peforming operations over elements of given array
+  It takes a function as its argument
+  Which further has 3 arrguments: arg1 -> element, arg2 -> index, arg3 -> array itself
+  and this function must return something
+  Eg prices = [100,200,300,400]
+  let newPrices = prices.map((price, index, prices)=> {
+    return price * 2
+  })
+  newPrices - [200,400,600,800]
+
+- sort()
+  It is used to sort the array elements
+  Note: It sorts the elements in the original array i.e inplace-sorting
+  Note: sort() converts the array elements to strings and then sorts them
+  Example
+  let prices = [10.9, 9, 5.2, 3.2]
+  prices.sort()
+  Will result in  [10.9, 3.2, 5.2, 9] 
+  One can also pass a function to define the sorting criteria
+  This function has 2 parameters representing two elements of the array
+  Example
+  prices.sort((val1, val2) => {
+    if(val1 > val2){
+      return 1
+    }else if (val1 === val2) {
+      return 0
+    }else{
+      return -1
+    }
+  })
+  which will result in [3.2, 5.2, 9, 10.9]
+  To revert the sorting logic replace return 1 with return -1 and vice-versa
+
+- reverse()
+  To reverse the elements of an array
+  Example: let nums = [20,12,31]
+  nums.reverse() will result in [31,12,20]
+  Note: It reverses the elements in the original array i.e inplace-reversing
+
+- filter()
+  It returns an new array filtering out the items from the original array
+  It takes a function where you define the filtering logic
+  That function has 3 args element, index, array
+  The function should return true for values to be kept others will be ignored.
+  Example
+  let nums = [10,22,12,33,24,42]
+  let newNumbers = nums.filter((item, index, nums) => {
+    return item > 25
+  })
+  will result in newNumbers - [33,42]
+
+- reduce()
+  Its use is to reduce the array to a single value
+  It take a function as input and that futher has 4 parameters
+  previousValues, currentValue, currentIndex, arrayOfValues
+  reduce also has an optional parameter which tells the starting value
+  Example
+  let values = [10,20,30,35,40,45]
+  let result = values.reduce((previousValue, currentValue, currentIndex, arrayOfValues))=>{
+    return previousValue + currentValue
+  }, 0)
+  result will be 180
+  Here 0 will be the first value of parameter `previousValue`
+  It the optional arg is not passed the array element at index 0 is used as the previousValue
+  and iteration starts from the next element (index 1 instead of index 0).
+
+  - split()
+  It converts a string into an array of elements created by spliting the string 
+  on every occurence of a separator passsed in as argument
+  Eg let textValue = 'Yogeshwar,1996,Red'
+  let values = textValue.split(',')
+  will result in values -> ['Yogeshwar', '1996', 'Red']
+
+  - join()
+  It converts an array of elements to a combined string.
+  Eg ['a',1].join() -> 'a1'
+  Eg ['One', 1].join(':') -> 'One:1'
+
+  - spread operator (...Array)
+  It is used to extract elements of an array
+  Can be used to copy and array as well like this 
+  Eg
+  let n = [1,2,3]
+  let p = [...n]
+  Note here p and n are two seperate independent arrays 
+  where array p has no reference to array n
+  But if n = [{'name': 'Raj','age':21}, {'name': 'Sumit','age':22}]
+  and p = [...n]
+  Then p is a new array of elements but since the elements in this case are objects
+  There reference is still maintained.Suman
+  This means adding or removing an elemen in n will have no effect on p
+  Eg n.push({'name':Hiren', 'age': 33}) will not affect array p
+  But changing object property in array n eg. n[0].name = 'Viraj'
+  will result in changing object in p as well
+  Eg: let n = [1,2,3]
+  let minVal = Math.min(...n)
+
+  - array destructuring
+  we can assign the values of array to seperate variables as follows
+  let n = ['Yogeshwar', 'Trehan', 27, 'Jalandhar']
+  let [fname, lname] = n will assign n[0] i.e 'Yogeshwar' to fname and n[1] i.e 'Trehan' to lname
+  We can also do 
+  let [fname, lname, ...others] = n
+  where `fname` will have n[0]
+  and `lname` will have n[1]
+  Array `others` will have rest of the elements of array n
+
+
+Exercise:
+1. Create an array of numbers (of your choice) and perform three array operations on it: 
+* filter for numbers greater than 5,
+* map every number to an object which holds the number on some property (e.g. "num") and 
+* reduce the array to a single number (the multiplication of all numbers).
+
+let n = [1, 2, 3, 45, 6, 7, 8]
+// filter for numbers greater than 5
+n.filter(val => val > 5) 
+// result [45, 6, 7, 8]
+
+//map every number to an object which holds the number on some property (e.g. "num")
+n.map(val => ({'num': val}))
+//result [{"num":1},{"num":2},{"num":3},{"num":45},{"num":6},{"num":7},{"num":8}]
+
+//reduce the array to a single number (the multiplication of all numbers)
+n.reduce((v1, v2) => v1*v2)
+
+2. Write a function ("findMax") which executes some logic that finds the largest number in a list of arguments.
+Pass the array from task 1 split up into multiple arguments to that function.
+
+let n = [1, 2, 3, 45, 6, 7, 8]
+
+function findMax(...args) {
+  return Math.max(...args)
+}
+
+let maxVal = findMax(...n)
+//maxVal is 45
+
+
+3. Tweak the "findMax" function such that it finds both the minimum and maximum and returns those as an array.
+Then use destructuring when calling the function to store the two results in separate constants.
+
+let n = [1, 2, 3, 45, 6, 7, 8]
+
+function findMinMax(...args) {
+  return [Math.min(...args),Math.max(...args)]
+}
+
+let [minVal, maxVal] = findMinMax(...n)
+// minVal is 1 and maxVal is 45
+Note when we pass ...n as a parameter we are spreading the Array
+when we define ...n as an argument  in function declaration it means we are collecting arguments into an array
+
+4. Create a list (and possibly some surrounding logic) where you ensure that NO duplicate values can be added.
+Use whichever approach seems appropriate to you.
+ 
+new Set([1,2,1,2,3,41,2,1])
+
+Sets and Maps
+=============
+Set is a data structure where we can store data of any kind and length
+A set is an iterable where order of elements is not guaranteed, duplicate elements are not allowed and elements are not accessible via indices
+
+Map is a datastructure where we can store key-value data of any kind and length
+Unlike objects where keys are only strings or numbers, in maps we can also have an array or an object as a key
+It is iterable where order of elements is guaranteed, duplicate keys are not allowed.
+
+Defining a set
+--------------
+We can create an empty set as follows
+let ids = new Set()
+or we can initialize with any iterable like an array
+let ids = new Set([1,2,3])
+
+  let n = new Set(1,2,3)
+- To check if a value exists in the set
+  n.has(1)
+
+- To add an element
+  n.add(4)
+
+- To iterate all elements
+  n.enteries() or n.values() 
+  They will return an iterator which can be iterated upon as follows
+  
+  for(const entery of n.enteries()) {
+    console.log(entery)
+  }
+  Result:
+  [1,1]
+  [2,2]
+  [3,3]
+
+  for(const value of n.values()) {
+    console.log(value)
+  }
+  Result:
+  1
+  2
+  3
+
+- To delete an element
+  n.delete(2)
+  Note: If you delete an element which is not part of the set if will not give any error
+
+- Additional info
+  WeakSet() - Similar to Set() but with fewer methods and allows the data it holds to be garbage collected when set is assigned null
+
+Defining a map
+--------------
+An empty map
+let x = new Map()
+
+- Initialising a map - It requires an array of [key, value] arrays as  follows
+  let x = new Map([['name', 'Yogeshwar'], ['age', 27]])
+
+  Note a map can also be used to store additionnal info for an object rather than keeping that  information in the object itself
+  Eg let person1 = {'name': 'Yogeshwar'}
+  let person1AdditionalInfo = {'age': 27, 'city': 'Jalandhar', 'email': 'yogeshwartrehan@gmail.com'}
+  let personDetails = new Map([[person1, person1AdditionalInfo]])'
+
+- set() - for adding values to the map. This method takes two arguments key, value
+
+  let person2 = 
+  {'name': 'Alex'}
+  let person2AdditionalInfo = {'age': 27, 'city': 'London', 'email': 'alex1983@gmail.com'}
+  personsDetails.set(person2, person2AdditionalInfo)
+
+- enteries() - To iterate all elements. It returns an iterator
+
+  for (const entery of personDetails,enteries()) {
+    console.log(entery)
+  }
+
+  Result
+  [{'name': 'Yogeshwar'}, {'age': 27, 'city': 'Jalandhar', 'email': 'yogeshwartrehan@gmail.com'}]
+
+  [{'name': 'Alex'}, {'age': 27, 'city': 'London', 'email': 'alex1983@gmail.com'}]
+
+  We can also iterate as follows using destructuring syntax
+  for (const [key, value] of personDetails,enteries()) {
+    console.log(key, value)
+  }
+
+- To iterate just the keys 
+  for (const key of personDetails.keys()) { }
+
+- To iterate just the values 
+  for (const value of personDetails.values())) { }
+
+Other operations on Map
+clear() - To clear all data 
+delete()- To delete an element by key name
+forEach() - To loop over the elements
+size - To know the no. of elements in the map. (Its a property, not a method)
+
+Maps vs Objects
+Maps
+- Better performance for large quantities of data
+- Better performance when adding or removing data frequently
+- Key can be of any type
+
+Objects 
+- Good for small and medium size data
+- Easier to create
+- Key should be a number, string or a symbol
+
+- Additional info
+  WeakMap() - Similar to Map() but with fewer methods and allows the data it holds to be garbage collected when map is assigned null
+
+
+Objects
+=======
+Objects are data structures in JS which have properties and methods.
+They allow us to 
+- group related data together and
+- split our code into logical pieces
+
+In JS there are primitive values like numbers, strings, booleans, null, undefined, symbol
+and reference values ie Objects like {key: value}, Array, DOM Nodes
+
+defining object
+--------------
+let person = {
+  name: 'Yogeshwar',
+  age: 27,
+  greet: function (){
+    alert('Hello')
+  }
+}
+Note: if key and value are same as follows:
+let p = {
+  one: 'one',
+  two: 2
+  }
+
+we can write it as 
+let p = {
+  one, 
+  two: 2
+}
+
+Note: properties on an object can also be numbers >=0 like
+let p = {
+  0: 'a'
+  0.1: 'b'
+  1: 'c'
+  2.1: 'd'
+}
+adding properties on an existing object
+--------------------------------------
+let person = {name: 'Yogeshwar'}
+person.isSalaried = true
+
+Note when we try to access any property that does not exist on an object it does not give an error but returns undefined. Eg console.log(person.isAdmin) will print undefined
+
+delete a property from an object
+--------------------------------
+delete person.age
+
+After that if you access age
+person.age it will return undefined
+
+Note: one may interpret that assigning undefined to a property deletes it. No thats not the case, upon doing so the property stays in the object
+when you print the object you can see it. Also we should never assign undefined value (thats something js assigns as default) 
+In case if we need to reset a value we should use null instead of undefined.
+
+defining properties on object dynamically
+----------------------------------------
+let keyName = 'city'
+
+let p = {
+  name: 'Alex'
+  age: 28
+}
+
+Method1
+p[keyName] = 'London'
+
+Method2
+ p = {
+  name: 'Alex'
+  age: 28,
+  [keyName] : 'London'
+}
+
+spread operator for objects (...)
+-------------------------------
+
+It can be used to create a copy of an object 
+For example, let p = {name: 'Alex', age: 20, favSports: ['Hockey', 'Badminton']}
+
+We can create a copy of object 'p' using spread operator as follows:
+let q = {...p}
+
+Note q created will be independent and detached from p but the array favSports
+will still be a reference to property favSports in p
+
+
+Note:
+let p = {name: 'Alex', age: 20, favSport: ['Hockey', 'Badminton']}
+let q  = {...p, age:29, favSport: [...favSport]} 
+Here ...p will copy all the key and values of p then `age`is overwritten by new value 20 and then favSport is also cloned and detached
+no longer referencing to p.favSport
+
+Object.assign()
+---------------
+
+It assigns the properties and methods of one object into the other, merging the two
+
+let p = {name:'Yo'}
+let q = {age: 10}
+let r = {10: 'ten'}
+Object.assign(p,q,r)
+It will merge key,values of q and r into p
+let x = Object.assign(p,q,r)
+It will merge key,values of q and r into p and assing a new object (not referencing the constituents) to x
+
+It can be used to create a copy of an object as follows:
+let newObject = Object.assign({}, <objectToCopy>)
+
+Object destructuring
+---------------------
+It allows to pull elements from an object and assign them to a variable
+
+let p = {name: 'A', age: 10, 20: 'Twenty', add: (a,b) => a+b}
+
+Now we can fetch `name` and assign it to  a variable as follows:
+let {name} = p;
+Note: here we mention the key name we want to pull and its the variable name as well
+To give a different name for the variable its done as follows
+
+let {name: fullName} = p
+this will create a variable `fullName` by fetching out name key from the object p
+
+Similarly we can use destructuring for methods -
+let {add} = p
+
+Checking if property exists
+---------------------------
+let p = {name: 'A', age: 10, 20: 'Twenty', add: (a,b) => a+b}
+
+to check if present
+if ('id' in p) { }
+
+to check if not present
+if (!(id in p)){ }
+
+We can also check a property exists using `hasOwnProperty` function
+p.hasOwnProperty('id)
+
+Object property descriptors
+----------------------------
+
+Properties on an object can be configured as follows
+
+Object.defineProperty(<obj>, <propertyName>, <configuration>)
+
+Example: 
+person = {}
+Object.defineProperty(person, 'name', {
+  configurable: true // means the property can be deleted
+  enumerable: true // means property can be iterated via for loop
+  value: <value of the property>
+  writable: true // allows value to be modified
+})
+Note: by default settings will be false
+So if you pass configuration as {value: "India"}
+then it would mean  
+{
+  configurable: false,
+  value: "Max",
+  enumerable: false,
+  writable: false
+
+}
+
+let person = {age: 10}
+Object.defineProperty(person, 'name', {value: 'Max'})
+
+for(const i in person){
+  console.log(i)
+}
+> age
+> undefined //name will not be iterated
+
+Object.keys(person) 
+> ['age'] // it will not be counted as a key
+
+person 
+> {age: 10, name: 'Max'} // but still it will be present and readonly
+
+person.name = 'Maximilian'
+
+person 
+>{age: 10, name: 'Max'}
+
+To fetch descriptors on properties of an object
+Object.getOwnPropertyDescriptors(<obj>)
+
+
+
+###############
+this keyword
+###############
+Inside of a function `this` keyword refers to whatever called that function
+No matter that function is part of an Object or not.
+
+Eg 
+let movie = {
+  info: {
+    title: 'Ramayan'
+    rating: 2
+    id: Math.random().toStrin()
+    getFormattedTitle:  function (){
+      return this.info.title.toUpperCase()
+    }
+  }
+}
+Note: every method defined using function keyword has `this` binding which refers to whatever called that function
+but in case of arrow functions `this` keyword inside it does not refers to whats calling it. But the context just outside the arrow function
+
+Example
+let members = 
+{ teamName: 'Kings',
+  people: ['Max','Shawn'], 
+  getMembers: function() {
+      //Here this referes to what will call getMembers i.e members Object
+      this.people.forEach(function(p){
+          // Here function is called inside forEach so here `this` is window object 
+          console.log("This inside forEach", this)
+          console.log(p + '-' + this.teamName)
+    })
+  }
+}
+
+Example
+let members = { 
+  teamName: 'Kings',
+  people: ['Max','Shawn'], 
+  getMembers: function() {
+      //Here this referes to what will call getMembers i.e members Object
+      this.people.forEach(p => {
+          // Here function is arrow function and `this` will refer to outer `this` i.e memebers
+          console.log("This inside forEach", this)
+          console.log(p + '-' + this.teamName)
+    })
+  }
+}
+The this keyword can lead to some headaches in JavaScript - this summary hopefully acts as a remedy.
+this refers to different things, depending on where it's used and how (if used in a function) a function is called.
+
+Generally, this refers to the "thing" which called a function (if used inside of a function). That can be the global context, an object or some bound data/ object (e.g. when the browser binds this to the button that triggered a click event).
+
+1) `this` with respect to  Global Context (i.e. outside of any function)
+function something() { ... }
+console.log(this); // logs global object (window in browser) in strict mode as well as non strict mode
+
+2) `this` with respect to a Function (non-Arrow) - called in the global context
+function something() { 
+    console.log(this);
+}
+something(); // logs global object (window in browser) in non-strict mode, undefined in strict mode
+
+3) this in an Arrow-Function - called in the global context
+const something = () => { 
+    console.log(this);
+}
+something(); // logs global object (window in browser) - in strict mode as well as non strict mode
+
+4) this in a Method (non-Arrow) - Called on an object
+
+const person = { 
+    name: 'Max',
+    greet: function() { // or use method shorthand: greet() { ... }
+        console.log(this.name);
+    }
+};
+person.greet(); // logs 'Max', "this" refers to the person object
+
+5) this in a Method (Arrow Function) - Called on an object
+
+const person = { 
+    name: 'Max',
+    greet: () => {
+        console.log(this.name);
+    }
+};
+
+person.greet(); // logs nothing (or some global name on window object), "this" refers to global (window) object, even in strict mode
+
+6) `this` can refer to unexpected things if you call it on some other object, e.g.:
+
+const person = { 
+    name: 'Max',
+    greet() {
+        console.log(this.name);
+    }
+};
+ 
+const anotherPerson = { name: 'Manuel' }; // does NOT have a built-in greet method!
+ 
+anotherPerson.sayHi = person.greet; // greet is NOT called here, it's just assigned to a new property/ method on the "anotherPerson" object
+ 
+anotherPerson.sayHi(); // logs 'Manuel' because method is called on "anotherPerson" object => "this" refers to the "thing" which called it
+If in doubt, a console.log(this); can always help you find out what this is referring to at the moment!
+
+
+#################
+Shorthand to adding a method to an object
+#################
+let movie = {
+  info: {
+    title: 'Ramayan'
+    rating: 2
+    id: Math.random().toStrin()
+    getFormattedTitle (){
+      return this.info.title.toUpperCase()
+    }
+  }
+}
+####################
+Bind vs Call vs apply
+####################
+let movie = {
+  info: {
+    title: 'Ramayan'
+    rating: 2
+    id: Math.random().toStrin()
+    getFormattedTitle (){
+      return this.info.title.toUpperCase()
+    }
+  }
+}
+Now for the `movie` object if we use object destructuring for method `getFormattedTitle`
+let {getFormattedTitle} = movie
+
+and then call that function
+getFormattedTitle()
+
+it will give error because getFormattedTitle is not called by anyone and the keyword this inside it will then refer to global window object which will not have the info property on it.
+
+To fix this we can do 
+getFormattedTitle = getFormattedTitle.bind(movie)
+getFormattedTitle()
+
+Note: usually bind is used to preconfigure a function which will be called in the future but in the above case we are calling the function right away.
+
+For this we can use call() method as follows
+let {getFormattedTitle} = movie
+getFormattedTitle.call(movie)
+
+Just like bind(), call() also allows multiple arguments 
+first argument is what should be used for this keyword inside the function and following are function arguments
+
+Note: There is another method called apply() where
+first argument is what should be used for this keyword inside the function 
+and second argument is array where you can write rest of the arguments of function
+
+
+Note:`this` inside of a function that's triggered based on an event listener refers to the DOM element or to the thing that is responsible for triggering this event.
+
+
+
+########################
+Getters and setters
+
+#######################
+JS allows us to perform operations on a property inside an object before reading or writting its value using getters and setters:
+
+Ex let movie = {
+  title: 'Hello Brother',
+  id: 1212,
+  rating: 3,
+  isPopular() {
+    return this.rating > 2
+  }
+}
+
+Now we can define title as follows:
+let movie = {
+  get title (){
+    return this._title.trim()
+  },
+  set title (val) {
+    if (val == ''){
+      this._title = 'NA'
+    }else {
+      this._title = val
+    }
+  },
+  id: 1212,
+  rating: 3,
+  isPopular() {
+    return this.rating > 2
+  }
+}
+
+Note if we have defined only a getter on a property then it becomes readonly and one cannot assign the value to that property
+
+let movie = {
+  get title (){
+    return 'Hello'
+  },
+  id: 1212,
+  rating: 3,
+  isPopular() {
+    return this.rating > 2
+  }
+}
+
+trying to do 
+movie.title = 'Force' // this will give error as the setter is not defined.
+
+
+#####
+Class
+#####
+
+In a class you define the blueprint of the properties and methods you want in your objects
+
+Syntax
+Start with keyword class, followed by name starting with capital letter.
+If name is has more words then it should be like ProductList
+every other word starting with capital letter without any whitespace or _ or - etc
+
+When defining properties/fields on a class you assign values using = and end the line using ;
+
+class Product {
+  title;
+  url,
+  description;
+  price = 0;
+} 
+
+How to create object using a class
+new Product()
+
+How to initialise values
+If you want to update the values of fields other than default values
+It can be done as follows: 
+
+let p = new Product()
+p.title = 'Titanic'
+p.url = 'https://abc.com/s/1/image.parsing'
+
+
+constructor function
+--------------------
+This is the method which executes as soon as we create an new instance of the class.
+
+Example 
+class Product {
+  title;
+  url,
+  description;
+  price = 0;
+
+  constructor (title, url) {
+    this.title = title;
+    this.url = url;
+  }
+} 
+
+Now you can initalize the values of your object as soon as its created by doing
+
+let p = new Product('Titanic', 'https://abc.com/s/1/image.parsing')
+
+
+Note its not necessary to declare the class fields before initializing them inside the  constructor function
+We can also simply write like this
+class Product {
+  constructor (title, url) {
+    this.title = title;
+    this.url = url;
+    this.price = 0;
+    this.description = '';
+  }
+} 
+
+
+
+Static v/s  Instance field/property/method
+------------------------------------------
+
+static ones are accessible on class itself we dont need to instantiate the class to use them
+we define them with static keyword
+
+using `this` inside a static method means its refering to the class and not the instance and hence 
+
+this.prop = something inside  the static method would mean prop itself static 
+
+# Normally
+class App{
+  init(){
+    console.log('Init')
+    this.lang = ['JS']
+    console.log('This, ', this)
+  }
+}
+ 
+let app = new App()
+app.init()
+
+=> Here this referes to the instance of class App
+
+# With static method
+class App {
+  static init(){
+    console.log('Init')
+    this.lang = ['JS']
+    console.log('This, ', this)
+  }
+}
+App.init()
+
+=> Here this referes to the class itself . Hence the property lang is also a static property which i available on the class
+
+Note: Static properties can be used to share data between classes as shown below
+class B {
+    constructor (items){
+        this.items = items
+    }
+}
+class C {
+    addItems(){
+        console.log('A.items ', A.items )
+        return A.items.reduce((prev, curr) => prev + curr, 0)
+    }
+
+}
+
+class A {
+    static init(){
+        let b  = new B([20,30,50])
+        this.items = b.items
+    }    
+}
+
+=>
+A.init()
+let c = new C()
+c.addItems()
+
+Here we call init on class A which creates a static property items on class A returned from instance of class B
+Since class C uses the A.items in the addItems method directly the data gets shared from class B to class B via class A
+
+
+Converting objects to class based approach
+-------------------------------------------
+###--BEFORE--###
+const productList = {
+  products: [
+    {
+      title: 'A Pillow',
+      url: 'https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg',
+      description: 'A soft pillow!',
+      price: 19.99
+    },
+    {
+      title: 'A Carpet',
+      url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg',
+      description:'A carpet which you might like - or not.',
+      price: 89.99
+    }
+  ],
+  render() {
+    const renderHook = document.getElementById('app');
+    const prodList = document.createElement('ul');
+    prodList.className = 'product-list';
+    for (const prod of this.products) {
+      const prodEl = document.createElement('li');
+      prodEl.className = 'product-item';
+      prodEl.innerHTML = `
+        <div>
+          <img src="${prod.imageUrl}" alt="${prod.title}" >
+          <div class="product-item__content">
+            <h2>${prod.title}</h2>
+            <h3>\$${prod.price}</h3>
+            <p>${prod.description}</p>
+            <button>Add to Cart</button>
+          </div>
+        </div>
+      `;
+      prodList.append(prodEl);
+    }
+    renderHook.append(prodList);
+  }
+};
+
+productList.render();
+
+
+
+###--SHOPPING CART  - AFTER--###
+
+class Product {
+  constructor(title, image, desc, price) {
+    this.title = title;
+    this.imageUrl = image;
+    this.description = desc;
+    this.price = price;
+  }
+}
+
+class ShoppingCart {
+  items = [];
+
+  addProduct(product) {
+    this.items.push(product);
+    this.totalOutput.innerHTML = `<h2>Total: \$${1}</h2>`;
+  }
+
+  render() {
+    const cartEl = document.createElement('section');
+    cartEl.innerHTML = `
+      <h2>Total: \$${0}</h2>
+      <button>Order Now!</button>
+    `;
+    cartEl.className = 'cart';
+    this.totalOutput = cartEl.querySelector('h2');
+    return cartEl;
+  }
+}
+
+class ProductItem {
+  constructor(product) {
+    this.product = product;
+  }
+
+  addToCart() {
+    App.addProductToCart(this.product);
+  }
+
+  render() {
+    const prodEl = document.createElement('li');
+    prodEl.className = 'product-item';
+    prodEl.innerHTML = `
+        <div>
+          <img src="${this.product.imageUrl}" alt="${this.product.title}" >
+          <div class="product-item__content">
+            <h2>${this.product.title}</h2>
+            <h3>\$${this.product.price}</h3>
+            <p>${this.product.description}</p>
+            <button>Add to Cart</button>
+          </div>
+        </div>
+      `;
+    const addCartButton = prodEl.querySelector('button');
+    addCartButton.addEventListener('click', this.addToCart.bind(this));
+    return prodEl;
+  }
+}
+
+class ProductList {
+  products = [
+    new Product(
+      'A Pillow',
+      'https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg',
+      'A soft pillow!',
+      19.99
+    ),
+    new Product(
+      'A Carpet',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg',
+      'A carpet which you might like - or not.',
+      89.99
+    )
+  ];
+
+  constructor() {}
+
+  render() {
+    const prodList = document.createElement('ul');
+    prodList.className = 'product-list';
+    for (const prod of this.products) {
+      const productItem = new ProductItem(prod);
+      const prodEl = productItem.render();
+      prodList.append(prodEl);
+    }
+    return prodList;
+  }
+}
+
+class Shop {
+  
+  render() {
+    const renderHook = document.getElementById('app');
+
+    this.cart = new ShoppingCart();
+    const cartEl = this.cart.render();
+    const productList = new ProductList();
+    const prodListEl = productList.render();
+
+    renderHook.append(cartEl);
+    renderHook.append(prodListEl);
+  }
+}
+
+class App {
+  static cart;
+  //here we use static property to glue ShoppingCart to ProductItem class
+
+  static init() {
+    const shop = new Shop();
+    shop.render();
+    this.cart = shop.cart;
+  }
+
+  static addProductToCart(product) {
+    this.cart.addProduct(product);
+  }
+}
+
+App.init();
+
+###############################
+Getters/Setters in classes
+
+Like objects we can have getters and setters in classes as shown below
+
+class Cart {
+  items = []
+  set cartItems (value) {
+    this.items = value
+    this.cartValueString = 'Items worth $' + this.totalAmount + ' present in your cart'
+  }
+  get totalAmount (){
+    const sum =  this.items.reduce((prevValue, item) => prevValue + item.price , 0 )
+    return sum
+  }
+}
+
+let c = new Cart()
+c.cartItems = [{price: 100}, {price: 200}]
+c.cartValueString
+'Items worth $300 present in your cart'
+
+Here we define a class Cart where we have a setter on cartItems which
+The value passed to it is set on the items property and the cartValueString property is calculated
+During that calculation totalAmount is used and there is a getter on it which gets triggered and  evaluates the sum of prices on the cart items
+
+#########################
+Inheritance
+
+Sometimes there multiple classes which have duplicate code which can be pulled out and put into another class and others can inherit from it
+
+For example consider a classes for online post on social media
+
+class Post {
+  title;
+  text;
+  creatorId;
+
+}
+class ImagePost {
+  title;
+  text;
+  creatorId;
+  imageURL;
+  imageDescription;
+
+}
+class VideoPost {
+  title;
+  text;
+  creatorId;
+  videoURL;
+  ageRating;
+}
+
+can be rewritten as 
+
+class Post {
+  title;
+  text;
+  creatorId;
+}
+
+class ImagePost extends Post {
+  imageURL;
+  imageDescription;
+
+}
+
+class VideoPost extends Post {
+  videoURL;
+  ageRating;
+
+}
+
+Now the classes ImagePost and VideoPost extend from Post so they have all the properties and methods of Post class
+
+Note if parent class has a constructor and child does not. 
+Then instantiating the class will call constructor on parent class
+
+If constructor is present in both class and its parent class
+the contructor of class executes before parent
+NOTE: One must  call parent's constructor in derived class before accessing 'this' or returning from derived constructor
+
+class XYZ {
+  constructor(arg1) {
+    this.arg = arg1 //then here
+  }
+}
+class ABC extends XYZ {
+  constructor (arg1){
+    super(arg1) // First here 
+  }
+}
+
+###REWRITTING SHOPPING CART USING CONCEPT OF INHERITANCE#######
+
+class Product {
+  constructor(title, image, desc, price) {
+    this.title = title;
+    this.imageUrl = image;
+    this.description = desc;
+    this.price = price;
+  }
+}
+
+class ElementAttribute {
+  constructor(attrName, attrValue) {
+    this.name = attrName;
+    this.value = attrValue;
+  }
+}
+
+class Component {
+  constructor(renderHookId) {
+    this.hookId = renderHookId;
+  }
+
+  createRootElement(tag, cssClasses, attributes) {
+    const rootElement = document.createElement(tag);
+    if (cssClasses) {
+      rootElement.className = cssClasses;
+    }
+    if (attributes && attributes.length > 0) {
+      for (const attr of attributes) {
+        rootElement.setAttribute(attr.name, attr.value);
+      }
+    }
+    document.getElementById(this.hookId).append(rootElement);
+    return rootElement;
+  }
+}
+
+class ShoppingCart extends Component {
+  items = [];
+
+  set cartItems(value) {
+    this.items = value;
+    this.totalOutput.innerHTML = `<h2>Total: \$${this.totalAmount.toFixed(
+      2
+    )}</h2>`;
+  }
+
+  get totalAmount() {
+    const sum = this.items.reduce(
+      (prevValue, curItem) => prevValue + curItem.price,
+      0
+    );
+    return sum;
+  }
+
+  constructor(renderHookId) {
+    super(renderHookId);
+    this.render()
+  }
+
+  addProduct(product) {
+    const updatedItems = [...this.items];
+    updatedItems.push(product);
+    this.cartItems = updatedItems;
+  }
+
+  render() {
+    const cartEl = this.createRootElement('section', 'cart');
+    cartEl.innerHTML = `
+      <h2>Total: \$${0}</h2>
+      <button>Order Now!</button>
+    `;
+    this.totalOutput = cartEl.querySelector('h2');
+  }
+}
+
+class ProductItem extends Component {
+  constructor(product, renderHookId) {
+    super(renderHookId);
+    this.product = product;
+    this.render()
+  }
+
+  addToCart() {
+    App.addProductToCart(this.product);
+  }
+
+  render() {
+    const prodEl = this.createRootElement('li', 'product-item');
+    prodEl.innerHTML = `
+        <div>
+          <img src="${this.product.imageUrl}" alt="${this.product.title}" >
+          <div class="product-item__content">
+            <h2>${this.product.title}</h2>
+            <h3>\$${this.product.price}</h3>
+            <p>${this.product.description}</p>
+            <button>Add to Cart</button>
+          </div>
+        </div>
+      `;
+    const addCartButton = prodEl.querySelector('button');
+    addCartButton.addEventListener('click', this.addToCart.bind(this));
+  }
+}
+
+class ProductList extends Component {
+  products = [
+    new Product(
+      'A Pillow',
+      'https://www.maxpixel.net/static/photo/2x/Soft-Pillow-Green-Decoration-Deco-Snuggle-1241878.jpg',
+      'A soft pillow!',
+      19.99
+    ),
+    new Product(
+      'A Carpet',
+      'https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/Ardabil_Carpet.jpg/397px-Ardabil_Carpet.jpg',
+      'A carpet which you might like - or not.',
+      89.99
+    )
+  ];
+
+  constructor(renderHookId) {
+    super(renderHookId);
+    this.render()
+  }
+
+  render() {
+    this.createRootElement('ul', 'product-list', [
+      new ElementAttribute('id', 'prod-list')
+    ]);
+    for (const prod of this.products) {
+      new ProductItem(prod, 'prod-list');
+    }
+  }
+}
+
+class Shop {
+  constructor (){
+    this.render()
+  }
+  render() {
+    this.cart = new ShoppingCart('app');
+    new ProductList('app');
+  }
+}
+
+class App {
+  static cart;
+
+  static init() {
+    const shop = new Shop();
+    this.cart = shop.cart;
+  }
+
+  static addProductToCart(product) {
+    this.cart.addProduct(product);
+  }
+}
+
+App.init();
+
+
+##################################################33
+
+Private properties and methods on a class
+
+adding a `#` before a property or method makes it private which can be used within the class or object
+
+For example
+class ABC {
+    #a = 12
+
+    #sum() {
+        return this.#a + 12
+    }
+
+    constructor() {
+        this.total  = this.#sum()
+    }
+}
+
+let instanceABC = new ABC()
+instanceABC.total 
+=> 24
+
+instanceABC.#a
+=>Cannot read private member #a from an object
+
+########################################################3
+
+To know if an object is an instance of a class use `instanceof`
+
+> class A {
+  h = 10
+  k = { name: 'Max'}
+}
+
+> let j = new A()
+
+> j instanceof A 
+=> true
+
+
+####################
+Contructor Functions
+####################
+
+Assume we have a class
+
+class Person {
+    name = 'Max' 
+    constructor() {
+      this.age = 30
+    }
+    greet() {
+      console.log('Hi I am ' + this.name + ' and I am ' + this.age + ' years old')
+    }
+}
+
+const p = new Person()
+p.greet()
+
+We can also write it in form of constructor function as follows:
+
+function Person() {
+  this.name = 'Max'
+  this.age = 30
+  this.greet = function() {
+    console.log('Hi I am ' + this.name + ' and I am ' + this.age + ' years old')
+  }
+}
+const p = new Person()
+p.greet()
+
+note constructor functions like classes also act as blueprints for objects and have properties and methods
+We can say classes have syntatical sugar ie easy to write than constructor function 
+
+
+In a constructor function the object is returned because of the `new` keyword otherwise its just a regular function which does not return anything
+
+How `new` keyword works behind the scenes
+
+when calling a constructor function or class with `new` keyword
+It creates an empty object and assign it to `this` keyword in the very begining
+and adds the properties and methods to it 
+and returns it in the end
+
+Ex
+this = {}
+this.name = 'Max'
+this.onClick = function(){ 
+  console.log('Hello')
+}
+return this
+
+
+Question:Diff in constructor functions in general and ones within class?
+
+###########
+Prototypes
+###########
+
+In JavaScript, every object has a special hidden property [[Prototype]]  that is either null or references another object. That object is called “ prototype”:
+
+
+Object         [[Prototype]]   prototype object
+--------------                ----------------
+|            | ------------>  |              |
+--------------                ----------------  
+
+
+When we read a property from object, and it’s missing, JavaScript automatically takes it from the prototype.
+In programming, this is called “prototypical inheritance"
+The property [[Prototype]] is internal and hidden, but there are many ways to set it.
+One of them is to use the special name __proto__, like this:
+
+let animal = {
+  eats: true
+};
+let rabbit = {
+  jumps: true
+};
+
+rabbit.__proto__ = animal;
+
+Now we can find both properties eats and jumps in rabbit now
+rabbit.eats
+rabbit.jumps
+
+Here we can say that "animal is the prototype of rabbit" or "rabbit prototypically inherits from animal".
+So if animal has a lot of useful properties and methods, then they become automatically available in rabbit. Hence we can say such properties become “inherited”
+
+
+Note: __proto__ is a historical getter/setter for [[Prototype]]
+It’s a common mistake of novice developers not to know the difference between these two.
+Please note that __proto__ is not the same as the internal [[Prototype]] property.
+It’s a getter/setter for [[Prototype]]
+
+The prototype chain can be longer:
+
+let animal = {
+  eats: true,
+  walk() {
+    alert("Animal walk");
+  }
+};
+
+let rabbit = {
+  jumps: true,
+  __proto__: animal
+};
+
+let longEar = {
+  earLength: 10,
+  __proto__: rabbit
+};
+
+Now if we read something from longEar, and it’s missing, JavaScript will look for it in rabbit, and then in animal.
+
+longEar.walk()
+longEar.jumps
+
+There are only two limitations:
+1. The references can’t go in circles. JavaScript will throw an error if we try to assign __proto__ in a circle.
+2. The value of __proto__ can be either an object or null. Other types are ignored.
+
+https://javascript.info/prototype-inheritance
+
+Now consider a constructor function as shown below
+
+function Person() {
+  this.name = 'Max';
+  this.age = 30;
+  this.greet = function(){
+    console.log("Hi " + this.name)
+  }
+}
+
+Note: In JS functions are themselves objects so the term function-object refers to `function as an object` 
+Every constructor function you write has a special property `prototype` which is not part of the function body but its a property of the function-object
+
+console.dir(Person)
+//function-object for Person
+{
+  name: Person,
+  prototype: {
+    constructor: { 
+      name: Person,
+      prototype: {
+        constructor: {
+          ...
+        }
+      }
+      [[Prototype]]: {
+        ...,
+        [[Prototype]]:  { ... }
+      }
+    }
+  }
+  [[Prototype]]: {
+    ...,
+    [[Prototype]]:  { ... }
+  }
+}
+
+
+Hence, this property `prototype` is not added to the objects you create based on the constructor function because object properties come from whats defined in function body
+
+But it gets assigned to __proto__ or [[Prototype]] property of the objects 
+So when we do let p = new Person()
+
+console.dir(p)
+{
+  age: 30,
+  name: 'Max',
+  greet: {
+    //function-object 
+    ...
+  },
+  [[Prototype]]: {
+    constructor: {
+      //function-objects
+      ...
+    }
+    [[Prototype]]
+  }
+}
+
+Note:
+p.__proto__ === Person.prototype is true
+
+Hence we can say the obj corsp to property prototype on constructor func-object becomes the fallback for instances/objects created using the constructor function
+
+In JS when you write class B extends class A
+
+The properties and methods of class A are added in an object and then that object is assigned to the prototype property on class B's class-object 
+Note: This happens when you call super() inside constructor of class B
+
+
+Creating another instance/object of a class from an existing one
+----------------------------------------------------------------
+Lets say you have a constructor function
+function Person {
+  this.age = 30;
+}
+let p = new Person()
+
+Say later in the code you don't have access to the constructor-function Person
+You can still create new instances of Person as follows:
+
+let p2 = new p.__proto__.constructor()
+
+Classes and Prototypes
+-----------------------
+class AgedPerson {
+  printAge(){
+    console.log("Age ", this.age)
+  }
+}
+
+class Person extends AgedPerson {
+  name = 'Max'
+
+  constructor(){
+    super();
+    this.age=30
+  }
+
+  greet(){
+    console.log("Hello, I am ", this.name)
+  }
+}
+
+Note:When JS reads the above class definition  name='Max' is put after call to super() in the constructor
+
+Methods in classes
+-------------------
+Create an object of class Person
+let p = new Person()
+
+console.log(p)
+{
+  name: 'Max'
+  age: 30
+  [[Prototype]]: {
+    constructor: {},
+    greet: function () {
+      console.log("Hello, I am ", this.name)
+    },
+    [[Prototype]]
+
+  }
+}
+
+Here you will observe the method greet is part of the [[Prototype]] this is so because JS does some optimisation
+
+See name and age are variables which will change for every Person object but methods will not so they are defined in the [[Prototype]] to keep the instance object lightweight
+
+Note: if you define the methods in the class like this
+
+class Person extends AgedPerson {
+  name = 'Max'
+
+  constructor(){
+    super();
+    this.age=30
+  }
+
+  greet = function (){
+    console.log("Hello, I am ", this.name)
+  }
+}
+
+Then the optimisation is not done and 
+you will see greet in every instance of the object
+
+let p = new Person()
+
+console.log(p)
+{
+  name: 'Max'
+  age: 30,
+  greet: () => {console.log("Hello, I am ", this.name)}
+  [[Prototype]]: {}
+}
+
+Note: In a class a method can be defined via
+
+1.Method shorthand // optimised, by putting greet method on the prototype hence creating function object only once and sharing it every instance
+
+class A {
+  name = 'Max'
+  greet() {
+    console.log('Hi ', this.name)
+  }
+ }
+
+2. Property function // not optimised, every insrance has this property hence that many function objects
+class A {
+  name = 'Max'
+  greet = function () {
+    console.log('Hi ', this.name)
+  }
+ }
+
+3. Property arrow function // not optimised, every insrance has this property hence that many function objects. But here its easy to use `this`
+class A {
+  name = 'Max'
+  greet =  () => {
+    console.log('Hi ', this.name)
+  }
+ }
+
+#################################
+More about DOM
+
+DOM dataset
+-----------
+data-* attribute 
+we can add an attribute prefixed with `data-` like
+data-info
+data-project-info
+...
+
+and then access them over element with `dataset` property
+<DOMElement>.dataset.dataInfo
+<DOMElement>.dataset.dataProjectInfo
+
+eg for data stored in DOM like this 
+<ul>
+  <li data-item-info="Pencil"> Pencil </li>
+  <li data-item-info="Eraser"> Eraser </li>
+  <li data-item-info="Compass"> Compass </li>
+</ul>
+
+
+we can access it like this -
+
+listItems = document.querySelectorAll('li')
+
+for(let i of listItems) {
+console.log(i.dataset.itemInfo)
+}
+
+
+
+How to access element box
+--------------------------
+For any HTML page opened in your browser to access an element 
+Press F12 to open debugger pane
+Then goto elements tab and select the corsp element
+Then goto console tab and type $0 it will give you access to the DOM node corsp to that element
+
+Now to get information about the element's size and position you can call this function
+$0.getBoundingClientRect()
+
+
+Similarly
+$0.offsetTop - Distance from the top
+$0.offsetLeft- Distance from the left
+$0.offsetWidth - outer width of the box
+$0.offsetHeight - outer height of the box
+
+basically x,y of the elements i.e top-left corner
+
+offset properties give outer position of the box
+
+likewise there are client properties which give inner positioning
+i.e how far is the top left point of the inner content from the box boundary after any borders, scrollbars
+
+$0.clientTop - Distance from the top
+$0.clientLeft- Distance from the left
+$0.clientWidth - Inner with (outer width - borders and scrollbars)
+$0.clienHeight - Inner height (outer height - borders and scrollbars)
+
+
+$0.scrollHeight - height of the entire content including the part which is not visible but scrollable
+$0.scrollTo(x,y) - how much you want to scroll by absolute pixels from the elements top
+$0.scrollBy(x,y) - how much you want to scroll by relative pixels from the current scroll position
+
+To bring an element into visible viewport by scrolling you can do
+$0.scrollIntoView() //by default brhaviour is to jump abruptly  
+$0.scrollIntoView({behaviour: 'smooth'})
+
+
+Using Template tag
+--------------------
+To define to be used elements we use <template> tag
+
+<body>
+<template id='sample1'>
+<h2> Hello </h2>
+<p> My name is YOGI </p>
+</template>
+</body>
+
+templateNode = document.getElementById('sample1')
+document.importNode(templateNode.content, true)  which can be then added/appended to another DOM node
+
+
+Loading scripts dynamically
+----------------------------
+
+Currently the scripts are mentioned in html file in script tag and they get rendered as the page loads
+We can dynamically add and run a script as follows
+
+-- index.html --
+<html>
+  <head>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <button id="start">Start</button>
+  </body>
+</html>
+
+-- app.js --
+class App {
+  static init(){
+    document.getElementById('start').addEventListener('click', startScript)
+   
+  }
+
+  static startScript(){
+    const scriptElement = document.createElement('script')
+    scriptElement.src = 'scriptSample.js'
+    scriptElement.defer = true
+    document.head.append(scriptElement)
+  }
+}
+App.init();
+
+--scriptSample.js--
+console.log('Running the script')
+
+
+#################################
+SET TIMEOUT v/s SET INTERVAL
+setInterval(): It repeats a given function at every given time interval.
+setTimeout(): It executes a function, after waiting a specified number of milliseconds.
+
+
+setTimeout(arg1, arg2)
+-----------------------
+arg1 -> function you want to execute
+arg2 -> time in milliseconds after which the function should execute
+
+
+How it works ?
+Lets say you have a JS code as follows
+
+console.log("Hello")
+setTimeout(() => { console.log("My name is Yogi") }, 2000)
+console.log("Bye")
+
+It will execute as follows:
+
+Hello
+Bye
+----after 2 seconds-----
+My name is Yogi
+
+Note: setTimeout returns an id which can be used later to remove/clear the timeout as follows
+
+const timerId = setTimeout(() => { console.log("My name is Yogi") }, 2000)
+clearTimeout(timerId)
+
+
+UseCase:
+Say there are two buttons
+<button id="1"> Start</button> // It starts the script which triggers setTimeout
+<button id="2"> Stop</button> // It should clear the time out
+
+document.getElementById('1').addEventListener('click', startScriptThatTriggersTimeout)
+document.getElementById('2').addEventListener('click', clearExistingTimeout)
+
+var timerId;
+
+function startScriptThatTriggersTimeout (){
+  console.log("Hello")
+  timerId = setTimeout(() => { console.log("My name is Yogi") }, 5000)
+  console.log("Bye")
+}
+
+function clearExistingTimeout() {
+  clearTimeout(timerId)
+}
+
+setInterval(arg1, arg2)
+-----------------------
+arg1 - function to execute
+arg2 - time interval in milliseconds after which function executes repeatedly
+
+How it works ?
+Lets say you have a JS code as follows
+
+setInterval(() => { console.log("My name is Yogi") }, 2000)
+
+Result:
+My name is Yogi
+---After 2 seconds ---
+My name is Yogi
+---After 2 seconds ---
+My name is Yogi
+---After 2 seconds ---
+My name is Yogi
+---After 2 seconds ---
+My name is Yogi
+---After 2 seconds ---
+My name is Yogi
+....
+....
+
+
+Note: Like setTimeout, the setInterval also returns an id which can be stored and passed as an arg to clearInterval function to stop the function execution
+
+
+#######
+Events
+
+Adding event listeners
+-----------------------
+
+Adding an alert on click event on a button
+
+Method1: 
+<button onclick="alert('Hello there')"> Click me </button>
+
+Method2: 
+HTML
+<button> Click me </button>
+
+Js
+const button = document.querySelector('button')
+
+2.A
+button.addEventListener('click', alert('Hello there'))
+arg1 is the event 
+arg2 is the event handler
+
+2.B
+button.onclick = function() {
+  alert('Hello there')
+}
+
+2.C 
+const buttonClickHandler = () => {
+  alert('Hello there')
+}
+
+button.onclick = buttonClickHandler;
+
+2.D 
+const buttonClickHandler = () => {
+  alert('Hello there')
+}
+
+button.addEventListener('click', buttonClickHandler);
+
+Note: in case you want to multiple event handler functions 
+Either you can club them in a single function and make that as the event handler 
+Or better approach is to use addEventListener to add event handler
+
+const buttonClickHandler1 = () => {
+  alert('Hello there')
+}
+const buttonClickHandler2 = () => {
+  alert('Hi How are you?')
+}
+button.addEventListener('click', buttonClickHandler1);
+button.addEventListener('click', buttonClickHandler2);
+
+Removing event listeners
+-----------------------
+
+There is also a method called `removeEventListener` which removes the event listner on a DOM object
+
+Usage:
+------
+const buttonClickHandler = () => { alert("Hello") }
+button.addEventListener('click', buttonClickHandler)
+button.removeEventListener('click', buttonClickHandler)
+
+arg1 the event on which to remove the event handler
+arg2 event handler function note: this should be a constant 
+  
+Note: 
+button.addEventListener('click', () => { alert('Hello') });
+button.removeEventListener('click', () => { alert('Hello') });
+  
+won't work as the address of fn in addEventListener and removeEventListener is different
+similarly
+
+const buttonClickHandler = () => { alert("Hello") }
+button.addEventListener('click', buttonClickHandler.bind(this));
+button.removeEventListener('click', buttonClickHandler.bind(this));
+
+won't work as the address of fn in addEventListener and removeEventListener is different
+because bind creates a new function
+
+
+Using event object 
+------------------
+To use the event object in the event handler we can define the event handler as follows
+
+const buttonClickHandler = event => { console.log('Event ' , event) }
+
+Note:
+
+1. To know about the DOM from where the event has occurred you can use the property event.target
+Let say you want to disable the button once its clicked, then we can add an event listner as follows
+
+const buttonClickHandler = event => {
+   console.log('Event ' , event);
+   event.target.disabled = true;
+}
+
+2. In case of mouse enter event there is a property on event object called relatedTarget which is tells from where the enter event occurred
+If you have a button enclosed in a div and you move you mouse from outside button to inside button 
+event.relatedTarget will be a div
+
+----------------
+Types of Event
+
+Mouse Events 
+
+  click - triggers whenever element is clicked
+
+  mouseenter - triggers whenever you eneter on an element either first time or leaving and entering again
+  This event has a property called relatedTarget which tells which element did the mouse come from.
+  But it will not be accurate if the mouse movement is very fast
+
+
+To know about the events on any HTML element
+
+1. on browser search "mdn <element>"
+2. open the MDN web docs page 
+3. Search for DOM interface on the page and open the corsp link
+4. see if events section is present if not goto the HTMLElement before it in the hierarchy
+EventTarget <- Node <- Element <- HTMLElement <- <DOM Element of your element>
+
+Most of the elements will support events as listed here 
+https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement#events
+
+List of all types of events
+https://developer.mozilla.org/en-US/docs/Web/Events
+
+----------------
+Learning about preventDefault
+For form element which has a button of type submit the default behaviour when user clicks the button is to
+send the form data to the web-server and the server processes the data. The response from the server can dictate what the browser should do next, and a common default behavior is to reload the page.
+
+<form>
+  <label for="name">Name</label>
+  <input type="text" id="name">
+  <button type="submit">Submit</button>
+</form> 
+
+This default bahviour can be prevented as follows
+
+const form = document.querySelector('form')
+form.addEventListener('submit', event => {
+  event.preventDefault();
+})
+
+%%%%% 
+ END
+%%%%%
+
+Useful links
+HTML, CSS, JS, Webforms, Accessibility, Performance, Tools and testing
+https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web
