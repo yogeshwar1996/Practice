@@ -1557,9 +1557,8 @@ To fetch descriptors on properties of an object
 Object.getOwnPropertyDescriptors(<obj>)
 
 
-
 ###############
-this keyword
+this keyword                 Bookmark: #thisKeyword
 ###############
 Inside of a function `this` keyword refers to whatever called that function
 No matter that function is part of an Object or not.
@@ -3032,6 +3031,165 @@ const form = document.querySelector('form')
 form.addEventListener('submit', event => {
   event.preventDefault();
 })
+----------------------------
+Event bubling and capturing
+
+Browser runs through two phases when it checks for listners to an event.
+First phase is called capturing phase and then comes the bubbling phase.
+
+Consider a button nested in a div which is further nested in a section
+<section>
+  <div>
+    <button>
+    </button>
+  </div>
+</section>
+
+Note: A click event on such a nested button can be listened by the event listeners on the button as well as div and section.
+
+Capturing phase works from outside to inside i.e.
+event listners of <section> work first then <div>'s then <button>'s
+
+Bubbling phase works from inside to outside i.e.
+event listners of <button> work first then <div>'s then <section>'s
+
+All events listners registered using addEventListener execute in bubbling phase by default i.e inside to outside
+
+<DOMelement>.addEventListener('<event>', () => {})
+
+We can switch the default behaviour and ensure the eventListner executes in capturing phase by passing third argument as true
+<DOMelement>.addEventListener('<event>', () => {}, true)
+
+---------------------------
+Stopping event propogation
+
+In case you dont want the any other event listners to execute other than ones on button you can do it as follows
+
+<buttonElement>.addEventListener('click', event => {
+  event.stopPropogation();
+  ...
+  ...
+})
+
+Note preventDefault and stopPropogation are two different things
+In the above code we are only stopping event propogation and not preventing the default behavior of click event
+
+
+In case you have multipe event listners on the button itself and you want to execute only one of them 
+then in each of them you can add
+
+<buttonElement>.addEventListener('click', event => {
+  event.stopPropogation()'
+  event.stopImmediatePropogation();
+  console.log('First listner')
+  ...
+  ...
+})
+
+<buttonElement>.addEventListener('click', event => {
+  event.stopPropogation();
+  event.stopImmediatePropogation();
+  console.log('Second listner')
+  ...
+  ...
+})
+
+Hence when either of listner will execute the other will not
+----------------
+Event delegation
+Its a pattern of registering events optimally
+
+Lets say we have a list of items and we want to highlight those items red when user clicks them and un-highlight them when clicked again
+
+<ul>
+  <li>
+    <h2>Name </h2>
+    <p> Adam </p>
+  </li>
+  <li>
+    <h2>Age </h2>
+    <p> 20 </p>
+  </li>
+  ...
+</ul>
+
+const listItems = document.querySelectorAll('li');
+const list = document.querySelector('ul');
+
+Method1: (Not optimal) Add event listner on each list item
+ listItems.forEach(listItem => {
+   listItem.addEventListener('click', event => {
+     event.target.classList.toggle('highlight');
+   });
+ });
+
+Method2: (Optimal) Add event listner on the list itself and then access the list item using event.target
+list.addEventListener('click', event => {
+   console.log(event.currentTarget);
+   event.target.classList.toggle('highlight');
+  event.target.closest('li').classList.toggle('highlight');
+});
+
+
+Drawback the event.target may not be the list item always can be some tag inside the list item or one encompassing the list item
+So to get access to the list item we can use event.target.closest('li')
+
+----------------------------------
+Triggering events programatically
+
+Assume you have a form 
+<form>
+  <label for="name">Name</label>
+  <input type="text" id="name">
+  <button type="submit">Submit</button>
+</form>
+
+on which you have a event listner which prevents default behaviour
+
+const form = document.querySelector('form');
+form.addEventListener('submit', event => {
+  event.preventDefault();
+  console.log(event);
+});
+
+but you also have a event listner on label for click event which programatically submits the form
+
+const labelElement = document.querySelector('label');
+labelElement.addEventListener('click', event => {
+  console.log('Label clicked')
+  form.submit();
+})
+
+Note: when label will be clicked the form will get submitted and this will not be caught by the form submission event listner
+because events triggered programatically are not the same as user click the submit button
+
+-----------------------------
+`this` inside event listners usually referes to the dom element itself on which the event listner is registered and to typically the we have to programatically override the value of this inside the event listner using the bind method 
+Detailed info at this bookmark #thisKeyword
+
+
+#######################
+Drag and Drop Operation
+#######################
+
+Step1. Mark element as draggable
+Step2. Listen to dragstart event where you can describe the operation and append data using setdata() method
+Step3. Accept drop via drageneter and/or dragover event. Note: dragover listner is a must 
+the difference b/w 2 is that dragover triggers for child elements of the elements also and other one does not.
+In these event listners we need to call preventDefault() because by default elements dont allow and element to be droppedd.
+Step4: (optional) Listen to dragleave event
+Step5: Listen to drop event
+Step6: (optional) Listen to dragend event. this event is fired even when drag is cancelled or user drops in an invalid area
+
+Step1. 
+document.getElementById(<elementId>).addEventListener('dragstart', event => {
+  /*About type of data : https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Recommended_drag_types */
+  event.dataTransfer.setData('text/plain', this.id);
+
+  /* About effectAllowed - https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/effectAllowed */
+  event.dataTransfer.effectAllowed = 'move';
+});
+
 
 %%%%% 
  END
