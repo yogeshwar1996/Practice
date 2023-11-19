@@ -63,6 +63,7 @@ class Tooltip extends Component {
     const tooltipElement = document.createElement('div');
     tooltipElement.className = 'card';
     const tooltipTemplate = document.getElementById('tooltip');
+     /* More on importing node https://developer.mozilla.org/en-US/docs/Web/API/Document/importNode */
     const tooltipBody = document.importNode(tooltipTemplate.content, true);  
     tooltipBody.querySelector('p').textContent = this.text;
     tooltipElement.append(tooltipBody);
@@ -92,6 +93,7 @@ class ProjectItem {
     this.updateProjectListsHandler = updateProjectListsFunction;
     this.connectMoreInfoButton();
     this.connectSwitchButton(type);
+    this.connectDrag();
   }
 
   showMoreInfoHandler() {
@@ -136,6 +138,17 @@ class ProjectItem {
     );
   }
 
+  connectDrag() {
+    //Add dragstart event listner on project
+    //Use setData to add info ie id to the event as a text 
+    //Mention the effect for drag event
+    document.getElementById(this.id).addEventListener('dragstart', event => {
+      console.log("Inside dragstart ", event)
+      event.dataTransfer.setData('text/plain', this.id);
+      event.dataTransfer.effectAllowed = 'move';
+    });
+  }
+  
   updateItem(updateProjectListsFn, type) {
     console.log("Inside update item with updateProjectListsFn ", updateProjectListsFn.name , ' and type', type)
     this.updateProjectListsHandler = updateProjectListsFn;
