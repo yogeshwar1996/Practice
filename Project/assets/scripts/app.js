@@ -143,14 +143,19 @@ class ProjectItem {
     //Add dragstart event listner on project
     //Use setData to add info ie id to the event as a text 
     //Mention the effect for drag event
-    document.getElementById(this.id).addEventListener('dragstart', event => {
+    const projectItem = document.getElementById(this.id)
+    projectItem.addEventListener('dragstart', event => {
       console.log("Inside dragstart ", event)
       event.dataTransfer.setData('text/plain', this.id);
       event.dataTransfer.effectAllowed = 'move';
     });
+
+    projectItem.addEventListener('dragend', event => {
+      console.log('On dragend', event)
+      //event.dataTransfer is none if dropped in a un-droppable area
+      //event.dataTransfer.dropeffect is move if dropped successfully
+    })
   }
-
-
 
   updateItem(updateProjectListsFn, type) {
     console.log("Inside update item with updateProjectListsFn ", updateProjectListsFn.name , ' and type', type)
@@ -178,23 +183,27 @@ class ProjectList {
   connectDroppable(){
     const list = document.querySelector(`#${this.type}-projects ul`)
     list.addEventListener('dragenter', event => {
+      console.log('inside drag eneter')
       if(event.dataTransfer.types[0]==='text/plain'){
         list.parentElement.classList.add('droppable')
         event.preventDefault();
       }
     })
     list.addEventListener('dragover', event => {
+      console.log('inside drag over')
       if(event.dataTransfer.types[0]==='text/plain'){
         event.preventDefault();
       }
     })
     list.addEventListener('dragleave', event => {
+      console.log('inside dragleave')
       //remove droppable class if the project dragged goes out of current list
       if(event.relatedTarget.closest(`#${this.type}-projects ul`) !== list){
         list.parentElement.classList.remove('droppable')
       }
     })
     list.addEventListener('drop', event => {
+      console.log('inside drop')
       const projectId = event.dataTransfer.getData('text/plain')
       if(this.projects.find(p => p.id == [projectId])) {
         //if dropped project is in the current list only do nothing
@@ -202,8 +211,9 @@ class ProjectList {
       else{
         //move the element to the other list which we can do by triggering clicking on the finish button
         document.getElementById(projectId).querySelector('button:last-of-type').click()
-        list.parentElement.classList.remove('droppable')
       }
+      //No matter dropped in the current list or the other list we still want to remove the highlighted background upon dropping the project
+      list.parentElement.classList.remove('droppable')
     })
   }
 
