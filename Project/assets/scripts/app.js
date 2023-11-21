@@ -94,6 +94,7 @@ class ProjectItem {
     this.connectMoreInfoButton();
     this.connectSwitchButton(type);
     this.connectDrag();
+    
   }
 
   showMoreInfoHandler() {
@@ -148,7 +149,9 @@ class ProjectItem {
       event.dataTransfer.effectAllowed = 'move';
     });
   }
-  
+
+
+
   updateItem(updateProjectListsFn, type) {
     console.log("Inside update item with updateProjectListsFn ", updateProjectListsFn.name , ' and type', type)
     this.updateProjectListsHandler = updateProjectListsFn;
@@ -169,6 +172,39 @@ class ProjectList {
         new ProjectItem(prjItem.id, this.switchProject.bind(this), this.type)
       );
     }
+    this.connectDroppable()
+  }
+
+  connectDroppable(){
+    const list = document.querySelector(`#${this.type}-projects ul`)
+    list.addEventListener('dragenter', event => {
+      if(event.dataTransfer.types[0]==='text/plain'){
+        list.parentElement.classList.add('droppable')
+        event.preventDefault();
+      }
+    })
+    list.addEventListener('dragover', event => {
+      if(event.dataTransfer.types[0]==='text/plain'){
+        event.preventDefault();
+      }
+    })
+    list.addEventListener('dragleave', event => {
+      //remove droppable class if the project dragged goes out of current list
+      if(event.relatedTarget.closest(`#${this.type}-projects ul`) !== list){
+        list.parentElement.classList.remove('droppable')
+      }
+    })
+    list.addEventListener('drop', event => {
+      const projectId = event.dataTransfer.getData('text/plain')
+      if(this.projects.find(p => p.id == [projectId])) {
+        //if dropped project is in the current list only do nothing
+      }
+      else{
+        //move the element to the other list which we can do by triggering clicking on the finish button
+        document.getElementById(projectId).querySelector('button:last-of-type').click()
+        list.parentElement.classList.remove('droppable')
+      }
+    })
   }
 
   //Assigns a function to callback

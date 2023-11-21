@@ -3183,11 +3183,12 @@ Step6: (optional) Listen to dragend event. this event is fired even when drag is
 
 Step1. 
 document.getElementById(<elementId>).addEventListener('dragstart', event => {
-  /*About type of data : https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Recommended_drag_types */
+  
   event.dataTransfer.setData('text/plain', this.id);
+  /*About type of data : https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API/Recommended_drag_types */
 
-  /* About effectAllowed - https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/effectAllowed */
   event.dataTransfer.effectAllowed = 'move';
+  /* About effectAllowed - https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer/effectAllowed */
 });
 
 

@@ -48,6 +48,10 @@ section {
   max-width: 90%;
 }
 
+.droppable {
+  background: #ff00ec;
+}
+
 section ul {
   padding: 1rem;
   max-height: 20rem;
