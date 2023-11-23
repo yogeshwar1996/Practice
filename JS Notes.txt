@@ -3271,7 +3271,48 @@ function add(num1, num2) {
 }
 The above function updates the value of sum which is declared outside the function.
 
+##################
+Factory functions
+#################
 
+Functions which produce other functions. Check the following example - 
+Consider you want to evaluate StateTax applied at the rate of 14% and CenteralTax applied at the rate of 10% on purchased items
+
+Method 1 - You can define a single func and call it twice with different arguments base on the tax rates
+function calculateTax(taxRate, purchaseAmount) {
+  return taxRate * purchaseAmount
+}
+
+const stateTax = calculateTax(0.14, 100)
+const centralTax = calculateTax(0.10, 100)
+
+Method 2 - You can write two functions for it
+
+function calculateStateTax(purchaseAmount){
+  return 0.14 * purchaseAmount
+}
+
+function calculateCentralTax(purchaseAmount){
+  return 0.10 * purchaseAmount
+}
+
+
+const stateTax = calculateStateTax(100)
+const centralTax = calculateCentralTax(100)
+
+Method 3 - We can also implement it by defining a factory function as follows - 
+function getTaxCalculatorFunction(taxRate){
+  function taxCalculator(purchaseAmount) {
+    return taxRate * purchaseAmount
+  }
+  return taxCalculator
+}
+
+let stateTaxFunction = getTaxCalculatorFunction(0.14)
+let centralTaxFunction = getTaxCalculatorFunction(0.10)
+
+let stateTax = stateTaxFunction(100)
+let centralTax = centralTaxFunction(100)
 
 %%%%% 
  END
