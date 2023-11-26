@@ -3564,6 +3564,56 @@ Number.NEGATIVE_INFINITY === -infinity
 
 Number.isFinite() can be used to check if the number is Infinity or not
 
+#############
+Math.random()
+#############
+
+Gives a random number between 0 and 1 (including 0, excluding 1)
+
+If you want to get a number between a minNum and maxNum we can write a function as follows
+
+function randomIntBetween(min, max) {
+ // Math.random() + min   => respects that min number will be possible
+ // Math.random() * (max-min) + min => respects that number will be below max (but excluding max value)
+ // Math.random() * (max-min + 1) + min =>  here max number will be possible (but it will have decimal values)
+  return Math.floor(Math.random() * (max-min + 1) + min) => all numbers between min and max including min and max
+}
+
+################
+Tagged Templates
+################
+
+function productDescription(strings, productName, productPrice){
+  console.log(strings)
+  console.log(productName)
+  console.log(productPrice)
+  let priceCategory = 'cheap';
+  if (productPrice > 20) {
+    priceCategory = 'fairly priced'
+  }
+  return `${strings[0]}${productName}${strings[1]}${priceCategory}${strings[2]}`;
+  //NOte: you can return anything and not just strings
+}
+
+const prodName = 'Armani perfume'
+const prodPrice = 18
+
+const prodOutput = productDescription`This product ${prodName} is ${prodPrice}.`
+
+console.log(prodOutput)
+
+##################
+Regular Expressions
+##################
+
+In Js Regular Expressions can be created as follows
+Method1 - const regex  = new RegExp('<pattern>')
+Method2 - const regex = /<pattern>/ 
+
+then you can perform operations like
+regex.test(<sampleString>)
+
+For more info https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_regular_expressions_in_javascript
 
 %%%%% 
  END
