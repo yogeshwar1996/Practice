@@ -15,7 +15,7 @@ How is JavaScript executed
   and then it compiles it on the fly to machine code as it executes faster and it executes machine code.
   All of this happens inside the browser on a single thread
 
-Dynamically, Interpred Programming language 
+Dynamically, Interpreted Programming language 
 * Not pre-compiled rather parsed and compiled "on the fly" (eg in the browser)
 * Code is evaluated and executed at runtime
 * Code can change at runtime (eg type of a variable)
@@ -3314,6 +3314,257 @@ let centralTaxFunction = getTaxCalculatorFunction(0.10)
 let stateTax = stateTaxFunction(100)
 let centralTax = centralTaxFunction(100)
 
+#########
+Closures
+#########
+In JavaScript, a closure is a combination of a function and the lexical environment within which that function was declared. A lexical environment consists of the variables that were in scope at the time the closure was created. The closure allows the function to retain access to those variables even when it is called outside that original lexical scope.
+
+Example1
+let user = 'Adam'
+
+function greetUser() {
+  console.log('Hi ', user)
+}
+
+user = 'Bill'
+
+greetUser();
+
+>>> Hi Bill
+
+In this case the variable user is declared outside the function and hence the function did not close over this (did not keep it in its seperate scope/environment).Hence when the function gets called it uses the latest value it can find for that variable.
+
+Example 2 we update the function where we store the value of user in a variable declared inside the function
+
+let user = 'Adam'
+
+function greetUser() {
+  let name = user
+  console.log('Hi ', name)
+}
+
+user = 'Bill'
+
+greetUser();
+
+>>> Hi Bill
+
+Here also the name will be assigned the latest value of user available at the time the function executes.
+
+Example 3: if same variable is declared outside as well as inside the function
+
+
+let user = 'Adam'
+
+function greetUser() {
+  let user = 'Joe'
+  console.log('Hi ', name)
+}
+
+user = 'Bill'
+
+greetUser();
+
+>>> Hi Joe
+
+Here the user variable is declared inside the function so its present in the closure and hence unaffected by similar variables outside the closure.
+
+When we have declare a variable inside a function as well outside a function its called variable shadowing.
+When this happens, the inner variable "shadows" or takes precedence over the outer variable within the function scope.
+
+########################################
+Immediately Invoked Function Expression
+########################################
+An IIFE, or Immediately Invoked Function Expression, is a JavaScript function that is executed as soon as it is defined. It is a common pattern used to create a private scope for variables to avoid polluting the global scope. The structure of an IIFE involves wrapping a function expression in parentheses and immediately invoking it. Here's a basic example:
+
+(function() {
+  // IIFE body
+  var x = 10;
+  console.log(x);
+})();
+// 'x' is not accessible here because it's within the IIFE's private scope
+
+
+Another example
+var result = (function() {
+  var counter = 0;
+
+  return function() {
+    return ++counter;
+  };
+})();
+
+console.log(result()); // 1
+console.log(result()); // 2
+console.log(result()); // 3
+
+In this example, the IIFE returns a function that creates a closure over the counter variable. 
+The returned function can be called multiple times, and each invocation will increment the counter variable, but the counter itself is not directly accessible from the outside.
+So we can say IIFE can also be used to create closures and control variable access.
+
+Note: this is useful only when dealing with var declared variables. 
+Now-a-days we can declare block-scoped variables using let and const
+
+let name = 'Max';
+
+{
+    let counter = 0
+    function incrementCounter(){ return ++counter}
+}
+
+console.log(incrementCounter()) // 1
+console.log(incrementCounter()) // 2
+console.log(incrementCounter()) // 3
+
+console.log(counter) //Error: counter is not defined
+console.log(name) // Max
+
+##########
+Recursion
+##########
+
+Recursion is a programming concept where a function calls itself in its own definition. In simpler terms, it's a way of solving problems by breaking them down into smaller instances of the same problem.
+
+Example
+
+def factorial(n):
+    # Base case
+    if n == 0 or n == 1:
+        return 1
+    else:
+        # Recursive case
+        return n * factorial(n - 1)
+
+###########
+Memoization
+###########
+
+Memoization is a technique used to optimize the performance of functions, especially recursive ones, by caching and reusing previously computed results. This helps to avoid redundant calculations and improve the overall efficiency of the algorithm
+
+// Generic memoization function
+function memoize(func) {
+    const cache = {};
+
+    return function (...args) {
+        const key = JSON.stringify(args);
+
+        // Check if the result is already in the cache
+        if (cache[key] !== undefined) {
+            return cache[key];
+        }
+
+        // If not, compute the result
+        const result = func.apply(this, args);
+
+        // Cache the result
+        cache[key] = result;
+
+        return result;
+    };
+}
+
+def factorial(n):
+    # Base case
+    if n == 0 or n == 1:
+        return 1
+    else:
+        # Recursive case
+        return n * factorial(n - 1)
+
+// Apply memoization to the factorial function
+const memoizedFactorial = memoize(factorial);    
+console.log(memoizedFactorial(25));
+
+###################
+Numbers and Strings
+###################
+
+In Js every number is a floating type number ie it has a integer and a decimal value
+Numbers are stored as 64 bits floating points
+
+The first bit is a sign bit
+The next 11 bits are expoinenet bits
+The final 52 bits are the fraction
+
+ A floating-point number is represented as a sign bit, an exponent, and a fraction (also called the mantissa or significand). The sign bit indicates whether the number is positive or negative, the exponent determines the scale of the number, and the fraction represents the significant digits.
+
+Example 
+12.345 
+- is a floating-point number
+- in base ten
+- with five digits of precision
+
+12.345 = 12345 (significand/mantissa) * (10(the base) ^ -3 (exponent))
+
+However, unlike 12.345, 12.3456 is not a floating-point number in base ten with five digits of precision
+it needs six digits of precision; the nearest floating-point number with only five digits is 12.346
+which is achieved by rounding off.
+
+The term floating point refers to the fact that the number's radix point can "float" anywhere to the left, right, or between the significant digits of the number. This position is indicated by the exponent.
+
+Floating-point numbers can represent special values such as positive and negative infinity, as well as NaN (Not a Number), which is used to represent undefined or unrepresentable results of operations.
+
+Cons -  Floating-point numbers have limited precision, leading to rounding errors. Accumulated rounding errors can lead to inaccuracies in calculations, especially in iterative or long-running computations
+
+JS number
+Number.MAX_SAFE_INTEGER which is `Math.pow(2, 53) - 1`
+Number.MAX_VALUE
+
+
+In Js 0.2 + 0.4 === 0.6 is false because JS executes calculations in binary system and then represents the result in decimal system 
+
+To get a number in binary system
+(num).toStrin(2)
+
+(0.2).toString(2) => '0.001100110011001100110011001100110011001100110011001101'
+(0.4).toString(2) => '0.01100110011001100110011001100110011001100110011001101'
+
+adding them in binary does not give 0.6 exactly
+
+But if you fix the number of digits it will give the correct result
++(0.2 + 0.4).toFixed(1) === 0.6 //true
+
+######
+BigInt
+######
+
+BigInts are a distinct numeric type from the regular Number type in JavaScript.
+BigInts in JavaScript are not represented as floating-point numbers.
+Unlike regular numbers, BigInts have no size limitations, and they are not subject to the precision issues associated with floating-point arithmetic. BigInts are used to represent integers and can be created by appending n to the end of an integer literal or by using the BigInt() constructor.
+
+Large Numbers  greater than Number.MAX_SAFE_INTEGER can be written as follows by putting an `n` in the end
+98765464365789876554678n
+
+If you try 
+98765464365789876554678n + 2 // Cannot mix BigInt and other types
+rather you need to do
+98765464365789876554678n + 2n // 98765464365789876554680n
+
+BigInts and regular numbers are distinct types, and explicit type coercion is needed when performing operations that involve both types.
+
+
+You cannot have decimals in BigInt eg  1.2n is invalid
+
+Note: 5n/2n will be 2n as Js simply cuts off values after . as the BigInt cannot be a decimal number
+
+###################
+Deciamls vs Integrs
+###################
+
+Decimal numbers, also known as real numbers, can have both whole number and fractional parts.
+Integers are whole numbers that can be positive, negative, or zero. They do not have any fractional or decimal parts.
+
+#########
+INFINITY
+#########
+This occurs when you divide by 0 eg 1/0
+
+Number.POSITIVE_INFINITY === Infinity
+Number.NEGATIVE_INFINITY === -infinity
+
+Number.isFinite() can be used to check if the number is Infinity or not
+
+
 %%%%% 
  END
 %%%%%
@@ -3321,3 +3572,4 @@ let centralTax = centralTaxFunction(100)
 Useful links
 HTML, CSS, JS, Webforms, Accessibility, Performance, Tools and testing
 https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web
+
