@@ -3615,6 +3615,174 @@ regex.test(<sampleString>)
 
 For more info https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#using_regular_expressions_in_javascript
 
+###########################
+Writting Asynchronous Code
+###########################
+
+Javascript is a single threaded and by default all the code is executed synchronously i.e in the sequence of occurrence
+
+##########################
+How JS executes async code
+##########################
+
+Whenever Js encouters an async code it hands over the operation to browser which uses multiple threads which executes the async logic. While browser is executing the async logic the JS thread continues executing the remaining synchronous logic.
+In async functions like setTimeout, addEventListener. We usually pass a callback function which executes when browser finishes executing async logic
+
+##########
+Event loop
+##########
+The JS code can be a mix of sync and async code
+Note all the sync code executes first in JS (which is single threaded)
+The async code is given to the browser to execute (which is multi threaded)
+When browser finished doing the job it puts the results in message queue
+Once the JS call stack is empty after executing the sync code
+Its the job of the event loop in the end is to synchronize the call stack in the engine with our waiting messages.
+What the event loop does is, it runs basically all the time and it keeps checking, if the stack is
+empty and do we have pending to-dos, and if the stack is empty, then the event loop executes
+it pushes any waiting messages or any to-do functions therefore into the call stack.
+
+Note:
+The event loop, just like the message queue, is built into the browser
+It's just important to understand that it's not part of the Javascript engine,
+it's really part of the host environment of Javascript i.e the browser
+
+
+Promises
+########
+When we have a nested async code chain as follows:
+
+someAsyncTask(() => {
+  anotherAsyncTask(() => {
+    yetAnotherAsyncTask(() => {
+      ...
+    })
+  }) 
+})
+
+We can simplify it using promise chain to look like:
+
+someAsyncTask()
+  .then(
+    () => {
+      return anotherAsyncTask();
+  })
+  .then( 
+    () => {
+      return yetAnotherTask();
+    }
+  ).then(
+    ...
+  )
+
+
+A Promise is defined as follows:
+
+const promise = new Promise (
+    ()=> {}
+  )
+
+Note promise takes a function  as argument which executes immediately
+
+This function further takes 2 arguments which are also functions
+const promise = new Promise (
+  (resolve, reject) => {
+    /* Function body of arrow function*/
+  }
+)
+
+Consider we have this logic to find users location 
+---------------------------------------------------
+const button = document.querySelector('button');
+
+function trackUserHandler() {
+  navigator.geolocation.getCurrentPosition(
+    posData => {
+      setTimeout(
+        () => {
+          console.log(posData);
+        }
+        , 2000)
+    },
+    error => {
+      console.log(error);
+    }
+  );
+  console.log('Getting position...');
+}
+
+button.addEventListener('click', trackUserHandler);
+
+---------------------------------------------------
+Transforming above nested logic using promises
+
+#1 Define setTimeout using promise
+const setTimer = duration => {
+  const promise = new Promise(
+    (resolve, reject) => {
+      setTimeout(
+        () => {
+          const success = Math.random() < 0.6;
+          if (success){ resolve('Done!')}
+          else reject("Failed!");
+        }
+        , duration);
+  });
+  return promise;
+};
+
+#2 Define getPosition using promise
+const getPosition = opts => {
+  const promise = new Promise( 
+      (resolve, reject) => {
+        const success = Math.random() < 0.6;
+        if (success){
+          navigator.geolocation.getCurrentPosition(
+            (postitionData) => { resolve(postitionData) }, // successCallback
+            (error) => { reject(error) }, opts) // errorCallback
+        } else {
+          reject('Failed to getPosition')
+        }
+      }
+    )
+  return promise
+}
+
+function trackUserHandler() {
+  getPosition()
+  .then(
+    //success callback 
+    (locationData) => { 
+      console.log("Inside success handler for first then ", locationData)
+      positionData = locationData 
+      return setTimer(2000)
+    }, 
+    //error callback
+    (error) => {
+      console.log("Inside error handler for first then ",error)
+    }
+  ).then( 
+    //success callback
+    (data) => {
+      console.log("Inside success handler for second then with data ", data, " positionData", positionData)
+    }, 
+    //error callback
+    (error) => {
+      console.log("Inside error handler for second then ", error, positionData)
+    }
+  )
+}
+
+Note:
+If getPosition promise resolves we enter success callback of 1st .then()
+  Then result of setTimer would determine the further execution
+  If setTimer promise resolves we enter success callback of 2nd .then()
+  else setTimer promise rejects we enter error callback of 2nd .then()
+
+If getPosition promise rejects we enter error callback of 1st .then()
+  After which we go to success callback of 2nd .then() because `error callback of 1st .then()` was not returning a promise so its by default resolved 
+
+
+
 %%%%% 
  END
 %%%%%
