@@ -3747,6 +3747,7 @@ const getPosition = opts => {
   return promise
 }
 
+#TRACK_USER_HANDLER
 function trackUserHandler() {
   getPosition()
   .then(
@@ -3780,6 +3781,89 @@ If getPosition promise resolves we enter success callback of 1st .then()
 
 If getPosition promise rejects we enter error callback of 1st .then()
   After which we go to success callback of 2nd .then() because `error callback of 1st .then()` was not returning a promise so its by default resolved 
+
+
+
+Note: The following async code 
+
+asyncFunction().then((succsss)=> {}, (error=>))
+
+can be re-written as 
+
+asyncFunction().then((succsss)=> {}).catch((error)=> {})
+
+We know promise has 3 states
+
+PENDING = when asyncFunction is executing
+RESOLVED = when promise is resolved causing then() to execute
+REJECTED = when promise was rejected causing catch() to execute
+
+
+Note: In a promise chain
+
+asyncFunc1()
+  .then((successOfFunc1)=> {return asyncFunc2})  // .catch() 
+  .then((successOfFunc2)=> {return asyncFunc3})  // .catch()
+  .then((successOfFunc3)=> { ... })
+
+We can add .catch() after any of the .then() methods and it will catch the any error in all the then() blocks priror to it and the code will execute for the .then() after the .catch()
+
+We can also add .catch() after every .then() method
+
+We can also add .catch() in the very end
+
+After all the then and catch funcs have executed based on resolve and reject the promise is now in SETTLED state
+and you can have a .finally() block in the end to do the final thing
+
+
+############
+async-await
+
+In JS there is another way of writting async code which uses keywords async and await
+async is added before a function which wraps the function code inside a promise and returns the promise
+(Note: async can be used only for functions)
+
+await keyword is added in front of the promise inside your funtction
+Note the next line of code does not execute unless the promise gets resolved or rejected
+<<demonstration>>
+
+function trackUserHandler() {
+  getPosition()
+  .then(
+    //success callback 
+    (locationData) => { 
+      console.log("Inside success handler for first then ", locationData)
+      positionData = locationData 
+      return setTimer(2000)
+    }, 
+    //error callback
+    (error) => {
+      console.log("Inside error handler for first then ",error)
+    }
+  ).then( 
+    //success callback
+    (data) => {
+      console.log("Inside success handler for second then with data ", data, " positionData", positionData)
+    }, 
+    //error callback
+    (error) => {
+      console.log("Inside error handler for second then ", error, positionData)
+    }
+  )
+}
+
+Can be re-written as 
+
+async trackUserHandler(){
+  const positionData = await getPosition()
+  const timerData = await setTmer(2000)
+}
+
+When trackUserHandler executes
+The code for getPosition is executed and then setTimer exectutes
+It gives an impression that code is executing synchronously but thats not the case
+Behind  the scenes async before a function means the function is now returning a promise
+
 
 
 
