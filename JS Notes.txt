@@ -3646,7 +3646,7 @@ The event loop, just like the message queue, is built into the browser
 It's just important to understand that it's not part of the Javascript engine,
 it's really part of the host environment of Javascript i.e the browser
 
-
+#########
 Promises
 ########
 When we have a nested async code chain as follows:
@@ -3747,7 +3747,7 @@ const getPosition = opts => {
   return promise
 }
 
-#TRACK_USER_HANDLER
+#3
 function trackUserHandler() {
   getPosition()
   .then(
@@ -3780,16 +3780,20 @@ If getPosition promise resolves we enter success callback of 1st .then()
   else setTimer promise rejects we enter error callback of 2nd .then()
 
 If getPosition promise rejects we enter error callback of 1st .then()
-  After which we go to success callback of 2nd .then() because `error callback of 1st .then()` was not returning a promise so its by default resolved 
+  If there is another error here then we enter error callback of 2nd  .then()
+  else  we go to success callback of 2nd .then() 
 
 
+Error Handling in Promise
+--------------------------
+Method1. with error callback inside .then()
 
-Note: The following async code 
-
+Example
 asyncFunction().then((succsss)=> {}, (error=>))
 
-can be re-written as 
+Method2. with catch block after .then()
 
+Example
 asyncFunction().then((succsss)=> {}).catch((error)=> {})
 
 We know promise has 3 states
@@ -3799,18 +3803,21 @@ RESOLVED = when promise is resolved causing then() to execute
 REJECTED = when promise was rejected causing catch() to execute
 
 
-Note: In a promise chain
+Error handling in a promise chain
+---------------------------------
+In a promise chain we ca haeve a series of .then().catch().then().cactch() ... 
+as both then() and catch() return a new Promise
 
 asyncFunc1()
   .then((successOfFunc1)=> {return asyncFunc2})  // .catch() 
   .then((successOfFunc2)=> {return asyncFunc3})  // .catch()
-  .then((successOfFunc3)=> { ... })
+  .then((successOfFunc3)=> { ... })  //.catch()
 
-We can add .catch() after any of the .then() methods and it will catch the any error in all the then() blocks priror to it and the code will execute for the .then() after the .catch()
+1. We can add .catch() after any of the .then() methods and it will catch the any error in all the then() blocks priror to it and the code will execute for the .then() after the .catch()
 
-We can also add .catch() after every .then() method
+2. We can also add .catch() after every .then() method
 
-We can also add .catch() in the very end
+3. We can also add .catch() in the very end
 
 After all the then and catch funcs have executed based on resolve and reject the promise is now in SETTLED state
 and you can have a .finally() block in the end to do the final thing
@@ -3818,14 +3825,14 @@ and you can have a .finally() block in the end to do the final thing
 
 ############
 async-await
+############
 
 In JS there is another way of writting async code which uses keywords async and await
 async is added before a function which wraps the function code inside a promise and returns the promise
-(Note: async can be used only for functions)
+The async keyword can be used with function declarations, function expressions, and arrow functions.
 
 await keyword is added in front of the promise inside your funtction
 Note the next line of code does not execute unless the promise gets resolved or rejected
-<<demonstration>>
 
 function trackUserHandler() {
   getPosition()
@@ -3857,15 +3864,180 @@ Can be re-written as
 async trackUserHandler(){
   const positionData = await getPosition()
   const timerData = await setTmer(2000)
+  console.log(positionData, timerData)
 }
 
 When trackUserHandler executes
-The code for getPosition is executed and then setTimer exectutes
-It gives an impression that code is executing synchronously but thats not the case
-Behind  the scenes async before a function means the function is now returning a promise
+The code for getPosition is executed and then setTimer exectutes and only after that the console statement executes
+It gives an impression that code is executing synchronously
+
+###############################
+Error handling with async await 
+###############################
+
+This can be done using try catch
+async trackUserHandler(){
+  try {
+    const positionData = await getPosition()
+    const timerData = await setTmer(2000)
+  } catch(error) {      
+    console.log('error', error)
+  }
+  console.log(positionData, timerData) // this will always run even no matter error or not
+}
+Note: Above we have put both awaits in a single try catch but we can keep them in separate try-catch blocks also if we want to handler the errors separately
+
+######################
+AsyncAwait vs Promise
+######################
+
+Comparison1:
+-----------
+Since async can be added only for the functions  and await can be added to the functions that return a Promise
+
+const setTimer = duration => {
+  const promise = new Promise(
+    (resolve, reject) => {
+      setTimeout(
+        () => {
+          const success = Math.random() < 0.6;
+          if (success){ resolve('Done!')}
+          else reject("Failed!");
+        }
+        , duration);
+  });
+  return promise;
+};
+
+We cannot simply write 
+await setTimer(2000)
+
+We have to do it using Immediately Invoked Function Expression  (IIFE) as follows
+
+(async function () {
+  await setTimer(2000)
+})();
+
+In this case it will be better if we just use .then()
+setTimer(2000).then((successData)=>{}, (errorData)=>{})
+
+Comparison2:
+------------
+Async await is useful when you want to run async code in a certain order. Its a good replacement for promise chain
+Promises are useful when you want to trigger multiple things simultaneously
 
 
+############
+Promise race
+############
 
+When we want to trigger two async functions asyncFunc1, asyncFunc2 simultaneously and proceed if any of them has finished execution without waiting for both to finish. We can define the async functions using promises and trigger them using Promise.race which takes an array of promise calls and returns another promise
+
+function async1Promise(arg1) {
+  const promise = new Promise((resolve, reject) => {
+    asyncFunc1(arg1).then( (data) => {  resolve(data)  }).catch( (error) => {  reject(error)  });
+  })
+  return promise;
+}
+
+function async2Promise(arg1) {
+  const promise = new Promise((resolve, reject)=> {
+    asyncFunc2(arg1).then( (data) => {  resolve(data)  }).catch( (error) => {  reject(error)  });
+  })
+  return promise;
+}
+
+Promise.race([async1Promise(arg1), async2Promise()]).then(
+  (successData) => {
+    //The successData will be the data of the func which finished first
+    // Note the other func is not cancelled it still executes but its result is ignored.
+  }, 
+  (errorData) => {
+
+  }
+)
+###########
+Promise all
+###########
+
+To execute multiple promises we have these choices
+
+- promise-chain where you have multiple .then() blocks one after another
+- async-await where we add `async` before function and await before multiple function calls which execute one after another
+
+There is another choice Promise.all defined as follows
+Promise.all([Promise1, Promise2, Promise3]).then((combinedResultOfAllPromises) => {
+  ...
+})
+
+1. Where we give an array of promises, which get triggered simultaneously but get resolved / rejected at their own pace
+2. Once all the promises get resolved we get data of all the Promises combined in an array in the order in which promises were passsed
+3. If any of the promises gets rejected then the catch block for Promise.all gets invoked immediately while the other promises that haven't resolved or rejected yet will continue to execute, but their results will be ignored, and their eventual resolutions or rejections won't affect the result of the Promise.all.
+
+Example:
+
+p1 = () => { const promise = new Promise((resolve, reject) => setTimeout(() => {console.log('P1'); resolve('One')}, 1000)); return promise}
+p2 = () => { const promise = new Promise((resolve, reject) => setTimeout(() => {console.log('P2'); resolve('Two')}, 2000)); return promise}
+p3 = () => { const promise = new Promise((resolve, reject) => setTimeout(() => {console.log('P3'); resolve('Three')}, 3000)); return promise}
+
+
+Promise.all([p1(), p2(), p3()]).then( 
+  ( combinedData ) => { 
+    console.log(combinedData) // ['One', 'Two', 'Three']
+  }
+).catch( (error ) => {
+    console.log('Inside final catch block with error ', error)
+  }
+)
+
+Note: We can also handle error for each promise separately as follows:
+
+handleError = (error) => {
+  console.log('Inside handle error', error) 
+}
+
+Promise.all([p1().catch(handleError),p2().catch(handleError), p3().catch(handleError)]).then( 
+  ( combinedData ) => { 
+    console.log(combinedData) // Assuming p1 gets rejected the result will be [undefined, 'Two', 'Three']
+  }
+).catch( (error ) => {
+    console.log('Inside final catch block with error ', error) // This will not execute in this case
+  }
+)
+##################
+Promise.allSettled
+##################
+
+This is used when you have mutliple promises to execute and you want results of all the promises even if some get rejected
+
+Promise.allSettled([p1(), p2(), p3()]).then((combinedData) => {
+  console.log(combinedData) // Assuming p2 got rejected, it will be ['One', undefined, 'Three']
+})
+
+Example:
+p1 = () => { const promise = new Promise((resolve, reject) => {console.log(1); setTimeout(() => {console.log('P1'); resolve('One')}, 2000)}); return promise}
+p2 = () => { const promise = new Promise((resolve, reject) =>  {console.log(2); setTimeout(() => {console.log('P2'); reject('Two')}, 1000)}); return promise}
+p3 = () => { const promise = new Promise((resolve, reject) =>  {console.log(3); setTimeout(() => {console.log('P3'); resolve('Three')}, 3000)}); return promise}
+
+
+Promise.allSettled([p1(), p2(), p3()]).then( 
+  ( combinedData ) => { 
+    console.log(combinedData) // ['One', 'Two', 'Three']
+  }
+)
+
+Result will be - 
+1 // This tells the promises get triggered simultaneously
+2 // This tells the promises get triggered simultaneously
+3 // This tells the promises get triggered simultaneously
+P2 // This tells when order in which they finished
+P1 // This tells when order in which they finished
+P3 // This tells when order in which they finished
+[  // This is the result of all Promises
+  {status: 'fulfilled', value: 'One'},
+  {status: 'rejected', reason: 'Two'},
+  {status: 'fulfilled', value: 'Three'}
+]
 
 %%%%% 
  END
