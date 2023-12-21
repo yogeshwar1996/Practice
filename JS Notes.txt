@@ -1,8 +1,13 @@
 Javascript Introduction
 #######################
 * Dynamic, weakly typed programming language.
-* Dynamically-typed languages are those (like JavaScript) where the interpreter
+* Dynamically-typed languages are those (like JavaScript, Python) where the interpreter
   assigns variables a type at runtime based on the variable's value at the time.
+  For example we can define a variable and assign it an integer initally and later we can assign it a string
+  let x = 5 
+  x = 'hello'
+  Note we cannot do this in statically typed language like C++
+
 * Interpreted language - on the fly compiled language
 * Hosted language the runs in different environments (eg in browser).
 * Its most prominent use case is to run code in a browser on a webpage.
@@ -4038,6 +4043,78 @@ P3 // This tells when order in which they finished
   {status: 'rejected', reason: 'Two'},
   {status: 'fulfilled', value: 'Three'}
 ]
+
+##########################
+Working with HTTP Requests
+###########################
+
+Making a GET request
+--------------------
+
+const xhr = new XMLHttpRequest();
+xhr.open('GET', 'https://jsonplaceholder.typicode.com/posts');
+xhr.send()
+
+To access the data we have to add a listener to onload event
+
+xhr.onload = function() {
+  console.log(JSON.parse(xhr.response))
+}
+
+To avoid parsing like this we can do the following
+
+xhr.responseType = 'json' //This will automatically parse the response
+xhr.onload = function() {
+  console.log(xhr.response)
+}
+
+Promisifying the XMLHttpRequest
+------------------------------
+
+function sendHTTPRequest(method, url, data){
+  const promise = new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+    xhr.responseType = 'json'
+    xhr.onload = function() {
+      resolve(xhr.response)
+    }
+    xhr.send(JSON.stringify(data))
+  })
+  return promise;
+}
+
+-------------------------------------
+Example:-
+
+<ul class="posts"></ul>
+
+<template id="single-post">
+  <li class="post-item">
+    <h2></h2>
+    <p></p>
+    <button>DELETE</button>
+  </li>
+</template>
+
+const listElement = document.querySelector('.posts');
+const postTemplate = document.getElementById('single-post');
+
+async function fetchPosts() {
+  const responseData = await sendHttpRequest(
+    'GET',
+    'https://jsonplaceholder.typicode.com/posts'
+  );
+  const listOfPosts = responseData;
+  for (const post of listOfPosts) {
+    const postEl = document.importNode(postTemplate.content, true);
+    postEl.querySelector('h2').textContent = post.title.toUpperCase();
+    postEl.querySelector('p').textContent = post.body;
+    listElement.append(postEl);
+  }
+}
+
+fetchPosts()
 
 %%%%% 
  END
