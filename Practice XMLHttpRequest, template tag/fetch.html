@@ -2,9 +2,34 @@
   <title>Fetching Posts</title>
 
   <body>
+    <div>
+      <h2>Create Post</h2>
+      <span style="display: flex"
+        ><label style="width: 100px">Title:</label
+        ><input id="title-input" type="text"
+      /></span>
+      <span style="display: flex; margin-top: 20px"
+        ><label style="width: 100px">Content:</label
+        ><input id="content-input" type="text" />
+        <button id="create-button" style="margin-left: 10px">
+          Create Post
+        </button>
+      </span>
+    </div>
+    <div>
+      <h2>Get Post</h2>
+      <span style="display: flex; margin-top: 20px">
+        <label style="width: 100px">Post Id</label>
+        <input id="post-id-input" type="text" />
+        <button id="fetch-post-button" style="margin-left: 10px">
+          Get Post
+        </button>
+      </span>
+    </div>
+    <h2>Get All Posts</h2>
+    <button id="fetch-button">Fetch All Posts</button>
+    <ul class="posts-log"></ul>
     <ul class="posts"></ul>
-
-    <button id="fetch-button">Fetch Posts</button>
 
     <template id="single-post">
       <li class="post-item">
@@ -16,15 +41,21 @@
 
     <script>
       const listElement = document.querySelector(".posts");
+      const postlistElement = document.querySelector(".posts-log");
       const postTemplate = document.getElementById("single-post");
       const fetchButton = document.getElementById("fetch-button");
+      const fetchPostButton = document.getElementById("fetch-post-button");
+      const createButton = document.getElementById("create-button");
+      const titleInput = document.getElementById("title-input");
+      const contentInput = document.getElementById("content-input");
+      const postIdInput = document.getElementById("post-id-input");
 
-      function sendHttpRequest(method, url) {
+      function sendHttpRequest(method, url, data) {
         return new Promise((resolve, reject) => {
           console.log("Method and url in Promise are ", method, url);
           const xhr = new XMLHttpRequest();
           xhr.open(method, url);
-          xhr.send();
+          xhr.send(JSON.stringify(data));
           console.log("Request sent");
           xhr.responseType = "json";
           xhr.onload = () => {
@@ -33,6 +64,23 @@
           };
         });
       }
+
+      async function fetchPost() {
+        const fixedAPIEndPoint = true;
+        const responseData = await sendHttpRequest(
+          "GET",
+          "https://jsonplaceholder.typicode.com/posts/" +
+            `${fixedAPIEndPoint ? "1" : postIdInput.value}`
+        );
+        const post = responseData;
+        console.log("Received response for user 1 ", post);
+        const postEl = document.importNode(postTemplate.content, true);
+        postEl.querySelector("h2").textContent = post.title.toUpperCase();
+        postEl.querySelector("p").textContent = post.body;
+        listElement.append(postEl);
+      }
+
+      fetchPostButton.addEventListener("click", fetchPost);
 
       async function fetchPosts() {
         const responseData = await sendHttpRequest(
@@ -49,6 +97,28 @@
       }
 
       fetchButton.addEventListener("click", fetchPosts);
+
+      async function createPost() {
+        const title = titleInput.value;
+        const content = contentInput.value;
+        const userId = Math.floor(Math.random() * 10);
+        const post = {
+          title: title,
+          body: content,
+          userId: userId,
+        };
+        const responseData = await sendHttpRequest(
+          "POST",
+          "https://jsonplaceholder.typicode.com/posts",
+          post
+        );
+        const postEl = document.importNode(postTemplate.content, true);
+        postEl.querySelector("h2").textContent = "Post Id - " + responseData.id;
+        postEl.querySelector("p").textContent = "Created at " + Date();
+        postlistElement.append(postEl);
+      }
+
+      createButton.addEventListener("click", createPost);
     </script>
   </body>
 </html>
