@@ -60,7 +60,12 @@
           xhr.responseType = "json";
           xhr.onload = () => {
             console.log("Received response", xhr.response);
-            resolve(xhr.response);
+            if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.response);
+            else reject(new Error("Something went wrong"));
+          };
+          xhr.onerror = () => {
+            console.log("Received response", xhr.response, xhr.status);
+            reject(xhr.response);
           };
         });
       }
