@@ -4074,20 +4074,30 @@ Promisifying the XMLHttpRequest
 function sendHTTPRequest(method, url, data){
   const promise = new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
+    xhr.setRequestHeader('Content-Type','application/json')
     xhr.open(method, url);
     xhr.responseType = 'json'
     xhr.onload = function() {
-      resolve(xhr.response)
+      if (xhr.status >=200 && xhr.status<300) resolve(xhr.response)
+      else reject(new Error('Something went wrong'))
+    }
+
+    xhr.onerror - function (){
+      console.log(xhr.response)
+      console.log(xhr.status)
+      reject(new Error('Failed to send request'))
     }
     xhr.send(JSON.stringify(data))
   })
   return promise;
 }
 
--------------------------------------
-Example:-
+----------------------------------
+Example of GET and POST requests
 
 <ul class="posts"></ul>
+
+<button id="fetch-button">Fetch Posts</button>
 
 <template id="single-post">
   <li class="post-item">
@@ -4099,23 +4109,129 @@ Example:-
 
 const listElement = document.querySelector('.posts');
 const postTemplate = document.getElementById('single-post');
+const fetchButton = document.getElementById('fetch-button');
 
 async function fetchPosts() {
-  const responseData = await sendHttpRequest(
-    'GET',
-    'https://jsonplaceholder.typicode.com/posts'
-  );
-  const listOfPosts = responseData;
-  for (const post of listOfPosts) {
-    const postEl = document.importNode(postTemplate.content, true);
-    postEl.querySelector('h2').textContent = post.title.toUpperCase();
-    postEl.querySelector('p').textContent = post.body;
-    listElement.append(postEl);
+  try {
+    const responseData = await sendHttpRequest(
+      'GET',
+      'https://jsonplaceholder.typicode.com/posts'
+    );
+    const listOfPosts = responseData;
+    for (const post of listOfPosts) {
+      const postEl = document.importNode(postTemplate.content, true);
+      postEl.querySelector('h2').textContent = post.title.toUpperCase();
+      postEl.querySelector('p').textContent = post.body;
+      listElement.append(postEl);
+    }
+  } catch(error) {
+    alert(error.message)
   }
 }
 
-fetchPosts()
+fetchButton.addEventListener('click', fetchPosts)
 
+async function createPost(title, content){
+  const userId = Math.random()
+  const post = {
+    title,
+    body: content,
+    userId: userId
+  }
+  await sendHTTPRequest('POST', 'https://jsonplaceholder.typicode.com/posts', post)
+}
+
+Using fetch() for API
+----------------------
+
+We can re-write sendHttpRequest using fetch() as follows:
+Note: Fetch by defaults works using promises
+
+function sendHttpRequest(method, url, data){
+  const config = {
+    method: method,
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+
+  const promise =  fetch(url, config).then((response)=> {
+      if (response.status >= 200 && response.status < 300) return response.json()
+      else {
+        return response.json().then(error => {
+          console.log(errData)
+          throw new Error('Something went wrong')
+        })
+      }
+    }).catch( err => {
+      console.log('Error is ", err)
+      throw new Error(('Failed to send request'))
+  }) 
+  return promise;
+}
+
+
+#######################
+Working with form data
+
+With form data we have following advantages
+ - we can easily send files over API request
+ - it automatically picks values from the form inputs
+
+<form>
+  <div>
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title" />
+  </div>
+  <div>
+    <label for="content">Content</label>
+    <textarea rows="3" id="content" name="body"></textarea>
+  </div>
+  <button type="submit">ADD</button>
+</form>
+
+
+//In case title and content is available as arguments
+async function createPost(title, content){
+  const userId = Math.random()
+
+  const formData = new FormData()
+  formData.append('title', title)
+  formData.append('body', content  )
+  formData.append('userID', userId  )
+  await sendHTTPRequest('POST', 'https://jsonplaceholder.typicode.com/posts', formData)
+}
+
+//In case title and content needs to be taken up directly from the form input elements, for this the input elements should have a name attribute
+const form = docuemnt.querySelector('form')
+async function createPost(){
+  const userId = Math.random()
+  const formData = new FormData(form)
+  formData.append('userID', userId  )
+  await sendHTTPRequest('POST', 'https://jsonplaceholder.typicode.com/posts', formData)
+}
+
+function sendHttpRequest(method, url, data){
+  const config = {
+    method: method,
+    body: data   
+  }
+
+  const promise =  fetch(url, config).then((response)=> {
+      if (response.status >= 200 && response.status < 300) return response.json()
+      else {
+        return response.json().then(error => {
+          console.log(errData)
+          throw new Error('Something went wrong')
+        })
+      }
+    }).catch( err => {
+      console.log('Error is ", err)
+      throw new Error(('Failed to send request'))
+  }) 
+  return promise;
+}
 %%%%% 
  END
 %%%%%
