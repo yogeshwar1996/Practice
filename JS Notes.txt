@@ -4295,6 +4295,133 @@ Response has following things -
 * headers
 * statusText
 
+
+##################################################
+Organizing classes and functions in seperate files
+
+Assume you have multiple classes in app.js it will be hard to search and maintain a large file
+Instead we should separate the classes out into various files and import them in the <head> via script tags
+Here the order matters so we tend to add script tag for those files first which are complete and dont depend on others, followed by ones using them.
+This way the contents of files get added to the global object, which can be access via `window.document.scripts`
+
+Earlier =>
+App.js 
+  - class DOMHelper
+  - class Component
+  - class Tooltip extends Component 
+  - class ProjectItem
+  - class ProjectList
+  - class App
+
+Now =>
+App.js
+App
+  /Component.js
+  /ProjectItem.js
+  /ProjectList.js
+  /Tooltip.js
+Utiliy
+  /Analytics.js
+  /DOMHelper.js
+
+<html>
+  <head>
+    <script src="Utility/DOMHelper.js" defer></script>
+    <script src="App/Component.js" defer></script>
+    <script src="App/Tooltip.js" defer></script>
+    <script src="App/ProjectItem.js" defer></script>
+    <script src="App/ProjectList.js" defer></script>
+    <script src="App.js" defer></script>
+  </head>
+  <body></body>
+</html>
+
+####################
+Using modules in JS
+####################
+
+To manage depdendencies in a better way we use modules in js
+We do this by mentioning type="module" in the script tag of the starting file which in our case is App.js
+This tells the browser that this script and the scripts it will use will be using modules
+<script src="App.js" type="module"></script>
+
+Then we also add a keyword export before the each class we have defined in seperate file which makes that class exportable to other files 
+NOTE: It will lock down the file and file contents wont get added to the global object, every file will get its own scope instead.
+
+Now if we open index.html we see an error saying `Access to the script from origin 'null' has been blocked by CORS policy`
+
+Note: Since scripts can point to other scripts that it needs. It should be done carefully from security standpoint
+We need to make sure that a script cannot import another script from another webpage which might be malicious
+Even thought you wont write such modules but if you are using any third party libraries then those might been compromised and might try to download other malicious files.
+To protect our pagee from this there is CORS cross origin request policy
+Which means cross origin / cross domain requests are not allowed 
+You are only allowed to download scripts from the same domain you page is running on.
+
+Currently in our project we are serving the app with file protocol.
+Till now we have been opening index.html in our browser which is served using file protocol unlike how it opens when serverd by a web server
+
+But CORS is not supported for the file protocol
+This policy requires the page to be served from a real web-server in order to be validated
+
+We can run a web server locally using the npm package called 'serve' which can be installed with this command
+`npm i -g serve`
+For this we need to have Node.jS runtime environment on our PC
+Once everything is setup we run the command serve from the terminal from inside the directory where index.html is present.
+Upon runing the server you will get a URL and then you can open it in your browser  to see your app again
+
+Now you wont see the CORS error in the browser
+
+Lets see how we can import Component.js inside Tooltip.js using modules
+<html>
+  <head>
+    <script src="Utility/DOMHelper.js" defer></script>
+    <!-- <script src="App/Component.js" defer></script>  This will be used via modules-->
+    <script src="App/Tooltip.js" type="module" defer></script>
+    <script src="App/ProjectItem.js" defer></script>
+    <script src="App/ProjectList.js" defer></script>
+    <script src="App.js" type="module" defer></script>
+  </head>
+  <body></body>
+</html>
+
+In App/Component.js
+export class Component
+
+In App/Tooltip.js
+import {Component} from './Component.js'
+export class Tooltip extends Component
+
+Converting all files to modules
+-------------------------------
+
+<html>
+  <head>
+   <script src="App.js" type="module" defer></script>
+  </head>
+  <body></body>
+</html>
+
+app.js - it uses ProjectList
+import {ProjectList} from './App/ProjectList.js'
+
+App/ProjectList.js
+import {DOMHelper} from '../Utility/DOMHelper.js'
+import {ProjectItem} from './ProjectItem.js'
+export class ProjectList
+
+App/ProjectItem.js
+import {DOMHelper} from '../Utility/DOMHelper.js'
+import {Tooltip} from './Tooltip.js'
+export class ProjectItem
+
+Utility/DOMHelper.js
+export class DOMHelper
+
+App/Tooltip.js
+import {Component} from './Component.js'
+export class Tooltip extends Component
+
+
 %%%%% 
  END
 %%%%%
