@@ -4232,6 +4232,69 @@ function sendHttpRequest(method, url, data){
   }) 
   return promise;
 }
+
+################################
+Working with 3rd Party Libraries
+################################
+How to import them - 
+
+1. Download them locally 
+2. Use CDN link 
+<html>
+  <head>
+  <script src="lodash.js" defer></script>
+  <script src="https://cdn.jsdeliver.net/npm/lodash@4.17.15/lodash.min.js" defer></script>
+  </head>
+  <body>    
+  </body>
+</html>
+
+###############################################
+To use a third party library in browser console
+################################################
+
+Create a index.html file as below
+<html>
+<head></head>
+<body></body>
+</html>
+
+Open it in the browser and then in browser console paste - 
+
+var script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js';
+document.head.appendChild(script);
+
+#############################
+Using axios for HTTP requests
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+Axios supports promises
+Axios handles the json data itself no need to stringify anything, data already available as dictate
+Axios also takes care of the header itself based on the data we send
+Axios has good error handling. It has data along with status and handles 400, 500 erros also. No seperate error handling required.
+
+
+async getData(url){
+  try {
+    const response = await axios.get(url)
+    console.log('Response - ', response)
+  }catch(error) {
+    console.log('Error ', error)
+    console.log('Error ', error.message)
+    console.log('Error ', error.response)
+  }
+}
+
+
+Response has following things - 
+* config
+* data
+* status
+* request
+* headers
+* statusText
+
 %%%%% 
  END
 %%%%%
