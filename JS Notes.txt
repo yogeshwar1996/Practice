@@ -4421,6 +4421,338 @@ App/Tooltip.js
 import {Component} from './Component.js'
 export class Tooltip extends Component
 
+Import all syntax
+------------------
+Note: If there multiple exports in a files. You can import them all as follows:
+Component.js
+export class Component
+export function moveElement
+export const pi = 3.14
+
+app.js
+import * as ComponentHelper from './Component.js'
+
+Alias to a named import 
+-----------------------
+Note: If an imported class, function or const has a name clash with a variable in your file you can add an alias to it while importing as follows
+import {Component as cmp} from './Component.js'
+
+Default export and import
+--------------------------
+
+Along with named exports you can have a default export for example
+
+Component.js
+export default class {
+
+}
+
+export function moveElement () {
+
+}
+
+app.js
+import cmp, {moveElement} from './Component.js';
+
+Here cmp will be alias for the default export and then we give named imports in the curly braces.
+Usage:- 
+new ComponentHelper.Component()
+ComponentHelper.pi
+ComponentHelper.moveElement()
+
+
+Dynamically importing modules
+------------------------------
+
+Till now we have been doing static imports due to which all the modules get imported
+and this casuses as many API requests to fetch the modules as many we have defined.
+If you see the network tab you will see all the GET requests for the modules
+Too many requests will slow down your intial page
+So we can avoid this using dynamic imports as follows - 
+
+Example in ProjectItem.js, we use Tooltip class in the following function
+
+import { Tooltip } from "./Tooltip.js";
+class ProjectItem {
+  ...
+  ...
+  showMoreInfoHandler() {
+      if (this.hasActiveTooltip) {
+        return;
+      }
+      const projectElement = document.getElementById(this.id);
+      const tooltipText = projectElement.dataset.extraInfo;
+      const tooltip = new Tooltip(
+        () => {
+          this.hasActiveTooltip = false;
+        },
+        tooltipText,
+        this.id
+      );
+      tooltip.attach();
+      this.hasActiveTooltip = true;
+  }
+  ...
+  ...
+}
+So instead of importing in the start of the file. We can import it inside the showMoreInfoHandler function as follows - 
+
+showMoreInfoHandler() {
+    if (this.hasActiveTooltip) {
+      return;
+    }
+    const projectElement = document.getElementById(this.id);
+    const tooltipText = projectElement.dataset.extraInfo;
+    //import() returns a promise for which we can use then block or async-await
+    import('./Tooltip.js').then(module => {
+      const tooltip = new module.Tooltip(
+      () => {
+        this.hasActiveTooltip = false;
+      },
+      tooltipText,
+      this.id
+    );
+    tooltip.attach();
+    this.hasActiveTooltip = true;
+    })
+    
+ }
+
+General Notes
+-------------
+* When the module is loaded for the first time the code in it executes.
+Example
+Tooltip.js 
+
+console.log("Inside tooltip.js") // This will print when this module gets loaded first time.
+export class Tooltip extends Component {
+
+}
+
+* Since modules are scoped  and are by default in strict mode
+Defining a value in app.js does not make it present inside the other modules it uses as is.
+For this we need to define the value on the window object or the globalThis object
+
+Example
+app.js
+
+import {ProjectList} from 'App/ProductList.js'
+const MAX_VALUE = 100
+
+class App {
+
+}
+
+App/ProjectList.js
+
+console.log(this) // its undefined
+
+export class ProjectList {
+
+}
+
+Rather to make it work we need define and use values from globalThis
+
+app.js
+
+import {ProjectList} from 'App/ProductList.js'
+globalThis.MAX_VALUE = 100
+
+class App {
+
+}
+
+App/ProjectList.js
+
+console.log(globalThis.MAX_VALUE) 
+
+export class ProjectList {
+  function something() {
+    console.log(globalThis.MAX_VALUE)
+  }
+
+}
+
+#######################
+Init a project with npm
+@@@@@@@@@@@@@@@@@@@@@@@
+
+command: npm init
+It will create a npm config for you project containing details about the project, author etc
+This will generate a file named package.json and the config will be available there.
+
+########################
+Installing a npm package
+@@@@@@@@@@@@@@@@@@@@@@@@
+Lets start with installing ESLint
+
+commamd: npm install --save-dev eslint
+
+It will install eslint locallay as a dev dependency (one which is used only for development purpose but is not part of the production code.)
+
+./package.json 
+{
+  "name": "js-module-practice-4-using-webpack-and-npm",
+  "version": "1.0.0",
+  "description": "Using npm and webpack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yogeshwar Trehan",
+  "license": "ISC",
+  "devDependencies" : {
+    "eslint": "^8.56.0"
+  }
+}
+
+
+#######
+Webpack
+@@@@@@@
+Definition - 
+----------
+  Its a module bundler tool. It bundles the Javascript styles and HTML and bundles it in a way which is optimized for the web.
+
+Installation -
+------------
+  command: 
+  npm install --save-dev webpack webpack-cli
+
+  To install a specific version:
+  npm install --save-dev webpack@4 webpack-cli@3.3.9 --save-exact
+
+Config - 
+------
+  Its config looks like as follows =>
+  ./webpack.config.js
+
+  const path = require('path');
+
+  module.exports = {
+    //Config for entry point of the project
+    entry: './src/app.js', 
+
+    //Config for output
+    output: { 
+      filename: 'app.js',
+      path: path.resolve(__dirname, 'assets', 'scripts')
+    }
+  }
+
+Defining webpack execution script: 
+-----------------------------------
+  webpack can be run using command defined in the package.json under scripts section
+
+  ./package.json
+  {
+    ....
+    "script": {
+      "build": "webpack"
+    }
+  }
+
+  now we can run the script from terminal as follows - 
+  npm run build
+
+
+  Fixing some errors:
+  
+  Error1
+  ------
+  | export class ProjectList {
+>   projects = [];
+
+  webpack and some browsers don't support class variables yet. So we need to fix it as follows:
+
+  export class ProjectList {
+    // projects = [];
+
+    constructor(type) {
+      this.type = type;
+      this.projects = [];
+  
+  Error2 (May or may not occur)
+  If occurs, Cannot resolve './ProjectItem.js.js' then remove .js extension from the path wherever the modules are being imported
+
+  Upon successfull execution of `npm run build` we will get the following files
+   ./assets/scripts/app.js
+   ./assets/scripts/1.app.js
+
+  Note:
+   - both app.js and 1.app.js are very small and optimized
+   - we got 1.app.js due to lazy loading we added upon dynamically importing Tooltip.js in ProjectItem.js
+
+  Now we can run the project using web-server by executing
+  > serve
+
+  Open browser at localhost:3000 and in networks tab you will see GET request for app.js
+  Now when you click on 'Show more' info button nothing happens and request for 1.app.js fails
+
+  This issue occurs because we have only given path of the app.js in the index.html
+  and when we 1.app.js is needed the webpack searches in the root path instead of looking inside assets/scripts/
+  We can fix this by defining public path to the output section in webpack.config.js as follows:
+  {
+    output: {
+      filename: "app.js",
+      path: path.resolve(__dirname, "assets", "scripts"),
+      publicPath: 'assets/scripts/'
+    }
+  }
+  
+  Now if we rebuild using `npm run build` and then `serve` and click on More Info button it will work because now 1.app.js is fetched successfully
+
+Running webpack in development mode
+-----------------------------------
+For this we need to define mode in the webpack config file as follows
+./webpack.config.js 
+
+{
+  "mode": "development",
+  "entry":  ...
+  "output": {
+    ...
+  }
+}
+
+Now if we execute npm run build we get app.js and 0.app.js both of which are no longer compact and optimized.
+
+Using webpack dev server to serve application
+=============================================
+So far we have been serving the application using `serve` command
+To serve the application via webpack we need to do following - 
+
+1. npm install --save-dev webpack-dev-server@3.8.1 --save-exact
+2. add devServer config to webpack.config.js as follows 
+  {
+    ...
+    devServer: {
+    }
+  }
+3. Update package.json and add script
+{ ...
+  scripts: {
+    "build:dev": "webpack-dev-server"
+  }
+}
+4. Now in the terminal execute `npm run build:dev`
+
+Now the server is runnning watching for changes
+
+Enabling and using sourcemaps for debugging
+===========================================
+Add following to webpack.config.js
+
+{
+
+  ...
+  devtool: 'cheap-module-eval-source-map
+}
+Now if you run the application
+
+In the browsers sources section inside the left pane in webpack directory
+You will find src/App/
+
 
 %%%%% 
  END
