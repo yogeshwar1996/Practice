@@ -4754,7 +4754,24 @@ In the browsers sources section inside the left pane in webpack directory
 You will find src directory contianing the project files
 You can compare the contents of the file before and after sourcemaps
 
+Webpack for bundling production ready code
+###########################################
+For this we create a sepearate file webpack.config.prod.js
 
+The config in this file will be similar to webpack.config.js with following changes
+mode: "production"
+devtool: "cheap-source-map"
+
+Then we write a new command in the scripts section of package.json
+where we try to generate our assets rather than running webpack-dev-server
+
+"build:prod": "webpack --config webpack.config.prod.js" 
+
+Now if you clear/delete the assets/scripts directory and then run 
+npm run build:prod
+
+Webpack will generate assets/scripts and put the files in it
+Then we can run the application using the `serve` command
 %%%%% 
  END
 %%%%%
