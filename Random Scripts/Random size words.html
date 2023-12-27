@@ -1,0 +1,180 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Font Sizes</title>
+    <style>
+      /* Define different font sizes for each class */
+      .random-size {
+        display: inline-block;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // Function to generate a random font size
+      function getRandomFontSize() {
+        return Math.floor(Math.random() * 30) + 10; // Adjust the range of font sizes as needed
+      }
+
+      // Function to generate a paragraph with random font sizes
+      function generateRandomParagraph(words) {
+        var paragraph = document.createElement("p");
+
+        for (var i = 0; i < words.length; i++) {
+          var span = document.createElement("span");
+          span.textContent = words[i] + "\u00a0 \u00a0  ";
+          span.style.fontSize = getRandomFontSize() + "px";
+          span.classList.add("random-size");
+          paragraph.appendChild(span);
+        }
+
+        document.body.appendChild(paragraph);
+      }
+
+      // Example words for the paragraph
+      var exampleWords = [
+        "Once",
+        "upon",
+        "a",
+        "time",
+        "in",
+        "a",
+        "quaint",
+        "little",
+        "village",
+        "nestled",
+        "between",
+        "rolling",
+        "hills",
+        "and",
+        "babbling",
+        "brooks,",
+        "lived",
+        "a",
+        "curious",
+        "young",
+        "girl",
+        "named",
+        "Lily.",
+        "One",
+        "sunny",
+        "afternoon,",
+        "as",
+        "she",
+        "ventured",
+        "into",
+        "the",
+        "enchanted",
+        "forest",
+        "on",
+        "the",
+        "outskirts",
+        "of",
+        "the",
+        "village,",
+        "she",
+        "stumbled",
+        "upon",
+        "a",
+        "mysterious,",
+        "ancient-looking",
+        "book.",
+        "The",
+        "pages",
+        "whispered",
+        "forgotten",
+        "tales",
+        "of",
+        "magical",
+        "creatures",
+        "and",
+        "hidden",
+        "realms.",
+        "Intrigued,",
+        "Lily",
+        "found",
+        "herself",
+        "drawn",
+        "into",
+        "a",
+        "world",
+        "of",
+        "wonder",
+        "and",
+        "adventure,",
+        "where",
+        "talking",
+        "animals",
+        "became",
+        "her",
+        "companions,",
+        "and",
+        "the",
+        "trees",
+        "revealed",
+        "secrets",
+        "of",
+        "the",
+        "past.",
+        "With",
+        "each",
+        "turn",
+        "of",
+        "the",
+        "page,",
+        "Lily's",
+        "ordinary",
+        "day",
+        "transformed",
+        "into",
+        "an",
+        "extraordinary",
+        "journey,",
+        "leaving",
+        "her",
+        "forever",
+        "changed",
+        "by",
+        "the",
+        "magic",
+        "she",
+        "discovered",
+        "in",
+        "the",
+        "heart",
+        "of",
+        "the",
+        "forest.",
+        "And",
+        "so,",
+        "the",
+        "once-quiet",
+        "village",
+        "girl",
+        "became",
+        "the",
+        "heroine",
+        "of",
+        "her",
+        "own",
+        "fantastical",
+        "tale,",
+        "forever",
+        "bound",
+        "to",
+        "the",
+        "enchantment",
+        "that",
+        "lay",
+        "just",
+        "beyond",
+        "the",
+        "trees.",
+      ];
+
+      // Generate the random paragraph
+      generateRandomParagraph(exampleWords);
+    </script>
+  </body>
+</html>

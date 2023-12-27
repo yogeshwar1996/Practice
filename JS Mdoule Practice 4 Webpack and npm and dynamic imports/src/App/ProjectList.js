@@ -21,7 +21,7 @@ export class ProjectList {
   connectDroppable() {
     const list = document.querySelector(`#${this.type}-projects ul`);
     list.addEventListener("dragenter", (event) => {
-      console.log("inside drag eneter");
+      console.log("inside drag enter");
       if (event.dataTransfer.types[0] === "text/plain") {
         //Following will highlight the list where item is being dragged
         list.parentElement.classList.add("droppable");

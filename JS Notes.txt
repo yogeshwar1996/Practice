@@ -4737,21 +4737,22 @@ To serve the application via webpack we need to do following -
 }
 4. Now in the terminal execute `npm run build:dev`
 
-Now the server is runnning watching for changes
+Now the server is runnning watching for changes whenever we change any js file related to the project 
+the server will automatically pick the changes
 
 Enabling and using sourcemaps for debugging
 ===========================================
 Add following to webpack.config.js
 
 {
-
   ...
-  devtool: 'cheap-module-eval-source-map
+  devtool: 'cheap-module-eval-source-map'
 }
 Now if you run the application
 
 In the browsers sources section inside the left pane in webpack directory
-You will find src/App/
+You will find src directory contianing the project files
+You can compare the contents of the file before and after sourcemaps
 
 
 %%%%% 
