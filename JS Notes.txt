@@ -4238,16 +4238,20 @@ Working with 3rd Party Libraries
 ################################
 How to import them - 
 
-1. Download them locally 
-2. Use CDN link 
+option 1. Download them locally 
+option 2. Use CDN link 
 <html>
   <head>
-  <script src="lodash.js" defer></script>
-  <script src="https://cdn.jsdeliver.net/npm/lodash@4.17.15/lodash.min.js" defer></script>
+  <script src="lodash.js" defer></script> // If we have file locally
+  <script src="https://cdn.jsdeliver.net/npm/lodash@4.17.15/lodash.min.js" defer></script> // via CDN
   </head>
   <body>    
   </body>
 </html>
+
+Usage -
+We can start using them in the projects without any import statement
+app.js => _.difference([2,1], [2,3])
 
 ###############################################
 To use a third party library in browser console
@@ -4818,6 +4822,95 @@ Now for application to work properly we need to update the path of the script in
 as we no longer have app.js in the assets/scripts
 
 This change is required only for production build as in the dev build we do not have scripts in the assets/scripts but rather in the memory
+
+#########################################
+Installing and using third party packages:
+
+Example we can install lodash as follows: 
+
+npm install --save lodash
+Then we can use it in the project files as follows:
+
+app.js
+import * as _ from 'lodash';
+
+Note: if the import statement has a path which does not start with ./ then the path is searched in the node_modules
+
+##################################
+Browser Storage vs Server Storage
+
+* Browser storage includes localStorage, cookies, indexdb whereas server storage includes server-side database
+* In Browser we store data temporarily as for convinience and we store the essential data which is more persistent on the server side databae
+
+################################
+localStorage vs cookies vs indexdb
+
+localStorage, sessionStorage are key-value stores. Only JS running in the browser can access and clear the localStorage. Its not suitable for complex
+
+cookies is also key-value store. It can be configured to expire/delete sometime in future. Only JS running in the browser can access it
+cookies dont have good API to work with it
+cookies are aslo typically sent to the server with outgoing HTTP requests, hence unlike local and session storage the cookies can be read by the server because they are attached to the headers of the outgoing HTTP requests
+Its not suitable for complex
+
+indexDB is the most sophisticated among the browser side storages. Its a client side database built into the browser which you can use with a query language
+You can manage complex data in it as it can have different tables and records.
+You can access it and clear it using JS
+It has a javascript API but its a bit annoying and 
+
+These browser side storages are used to improve the user experience but you dont rely on them as you have to live with the fact that user can clear them manually
+
+############
+localStorage
+
+To save a key value in localStorage we can do
+localStorage.saveItem('name', 'Yogeshwar')
+localStorage.saveItem('id', 100)
+
+To save a dict we need to convert it to JSON
+const userDetails = {
+  name: 'Yogeshwar',
+  id: 123,
+  sports: ['Hockey', 'Badminton']
+}
+
+localStorage.setItem('userDetails', JSON.stringify(userDetails))
+
+To access the stored value
+localStorage.getItem('name')
+When accessing json data we can parse it while retreving
+const uDetails = JSON.parse(localStorage.getItem('userDetails'))
+
+Note:
+localStorage is never cleared unless user clears it manually
+It stays on closing and opening the browser and the browser tab as well
+
+################
+Sesstion Storage
+
+Usage
+sessionStorage.saveItem('name', 'Yogeshwar')
+sessionStorage.saveItem('id', 100)
+
+To save a dict we need to convert it to JSON
+const userDetails = {
+  name: 'Yogeshwar',
+  id: 123,
+  sports: ['Hockey', 'Badminton']
+}
+sessionStorage.setItem('userDetails', JSON.stringify(userDetails))
+
+To access the stored value
+sessionStorage.getItem('name')
+
+
+When accessing json data we can parse it while retreving
+const uDetails = JSON.parse(sessionStorage.getItem('userDetails'))
+
+Notes:
+Session storage keeps the data as long as the page is open in the browser
+even on page reload it will be there  
+if you close the tab or all tabs where your application is running or close the browser session storage is cleared
+
 %%%%% 
  END
 %%%%%
