@@ -4845,17 +4845,36 @@ Browser Storage vs Server Storage
 ################################
 localStorage vs cookies vs indexdb
 
-localStorage, sessionStorage are key-value stores. Only JS running in the browser can access and clear the localStorage. Its not suitable for complex
+* localStorage, sessionStorage are key-value stores.
+* Only JS running in the browser can access and clear the localStorage.
+* Its not suitable for complex
+* localStorage is never cleared unless user clears it manually
+  It stays upon closing and opening the browser and the browser tab as well
+  It is shared across various browser tabs of the applications  
+* Session storage keeps the data as long as the page is open in the browser
+  even on page reload it will be there  
+  if you close the tab and revive it, data will be there.
+  If you close tab and open same url in new tab it will be gone
+  If you close the browser it will be gone
+  It is not shared across various browser tabs of the applications
 
-cookies is also key-value store. It can be configured to expire/delete sometime in future. Only JS running in the browser can access it
-cookies dont have good API to work with it
-cookies are aslo typically sent to the server with outgoing HTTP requests, hence unlike local and session storage the cookies can be read by the server because they are attached to the headers of the outgoing HTTP requests
-Its not suitable for complex
-
-indexDB is the most sophisticated among the browser side storages. Its a client side database built into the browser which you can use with a query language
-You can manage complex data in it as it can have different tables and records.
-You can access it and clear it using JS
-It has a javascript API but its a bit annoying and 
+------------------------------------------------------------------------
+* cookies is also key-value store. 
+* It can be configured to expire/delete sometime in future. 
+* Only JS running in the browser can access it
+* cookies dont have good API to work with it
+* cookies are aslo typically sent to the server with outgoing HTTP requests,
+  hence unlike local and session storage the cookies can be read by the server 
+  because they are attached to the headers of the outgoing HTTP requests
+* Its not suitable for complex data
+* Servers can also set cookies to the header of their responses.
+* Cookies are available only if your webpage is being served with a real server eg when using `npm run build:dev` or just `serve`
+------------------------------------------------------------------------
+* indexDB is the most sophisticated among the browser side storages. 
+* Its a client side database built into the browser which you can use with a query language
+* You can manage complex data in it as it can have different tables and records.
+* You can access it and clear it using JS
+* It has a javascript API but its a bit annoying and 
 
 These browser side storages are used to improve the user experience but you dont rely on them as you have to live with the fact that user can clear them manually
 
@@ -4880,9 +4899,6 @@ localStorage.getItem('name')
 When accessing json data we can parse it while retreving
 const uDetails = JSON.parse(localStorage.getItem('userDetails'))
 
-Note:
-localStorage is never cleared unless user clears it manually
-It stays on closing and opening the browser and the browser tab as well
 
 ################
 Sesstion Storage
@@ -4902,14 +4918,36 @@ sessionStorage.setItem('userDetails', JSON.stringify(userDetails))
 To access the stored value
 sessionStorage.getItem('name')
 
-
 When accessing json data we can parse it while retreving
 const uDetails = JSON.parse(sessionStorage.getItem('userDetails'))
 
-Notes:
-Session storage keeps the data as long as the page is open in the browser
-even on page reload it will be there  
-if you close the tab or all tabs where your application is running or close the browser session storage is cleared
+###############
+Cookie storage
+
+To access all cookies we do
+const cookieData = document.cookie
+
+To save something on cookies we do
+const userId = 123
+document.cookie = `uid=${userId}`
+
+Note: it appends to the cookies rather than just assigning a new value to it.
+If the key for your cookie is same then its value will get replaced.
+
+Note: some cookie are visible in the browser console but we still cant access them using document.cookie
+because they have HTTPOnly flag set which means it can only be accessed by the server
+and not accessible from browser side JS.
+
+Note: accessing a key value in cookie is cumbersome you get all the cookie data rather than the specific one
+
+To simplify it we can do following
+data  = {}
+a = document.cookie.split(';')
+b = a.map(i => i.trim())
+c = b.map(j=> j.split('='))
+c.map(k => data[k[0]] = k[1])
+
+Now data will be key-value dict and value can be then parsed to obtain dict from JSON string
 
 %%%%% 
  END
