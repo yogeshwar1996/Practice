@@ -4843,7 +4843,7 @@ Browser Storage vs Server Storage
 * In Browser we store data temporarily as for convinience and we store the essential data which is more persistent on the server side databae
 
 ################################
-localStorage vs cookies vs indexdb
+localStorage vs cookies vs indexedDB
 
 * localStorage, sessionStorage are key-value stores.
 * Only JS running in the browser can access and clear the localStorage.
@@ -4869,8 +4869,13 @@ localStorage vs cookies vs indexdb
 * Its not suitable for complex data
 * Servers can also set cookies to the header of their responses.
 * Cookies are available only if your webpage is being served with a real server eg when using `npm run build:dev` or just `serve`
+* The default expiration time for a browser cookie is often set to a session cookie,
+  which means the cookie will persist only for the duration of the user's browsing session.
+  Once the user closes the browser, the session cookie is typically deleted.
+  Note closing a tab does not delete/clear the session cookie but closing the browser clears the session cookie
+
 ------------------------------------------------------------------------
-* indexDB is the most sophisticated among the browser side storages. 
+* indexedDB is the most sophisticated among the browser side storages. 
 * Its a client side database built into the browser which you can use with a query language
 * You can manage complex data in it as it can have different tables and records.
 * You can access it and clear it using JS
@@ -4948,6 +4953,55 @@ c = b.map(j=> j.split('='))
 c.map(k => data[k[0]] = k[1])
 
 Now data will be key-value dict and value can be then parsed to obtain dict from JSON string
+
+To avoid the cookie to expire at the end of the browser session, we can add one of the following flags
+* max-age eg. document.cookie = `uid=${userId}; max-age=50` meaning cookie should expire after 50 seconds
+* expires 
+
+#################
+indexedDB storage
+
+/* To open a connection the indexedDB -  indexedDB.open(<db-name>, <version>)
+  This return the connection to indexedDB which can be stored in a variable and we can add listners to it
+*/
+
+const dbRequest = indexedDB.open('StorageDummy',1)
+
+/*when you need to create a database and store in indexedDB or upgrade its version
+ we add listener for onupgradeneeded event*/
+dbRequest.onupgradeneeded = function(event){
+  
+  //using event we can access the database
+  let db  = event.target.result
+
+  /* now we can create objectStore which is analogous to tables
+   db.createObjectStore(<name>, <config for key which uniquely identifies each record>);
+   */
+  const objStore = db.createObjectStore('products',{keyPath: 'id'});
+  
+}
+
+/*When database is already there in indexedDB and you want to interact with it 
+  we add listner to onsuccess event*/
+dbRequest.onsuccess = function(event){
+  //using event we can access the database
+  let db  = event.target.result
+  
+  //Initiate a transaction on the db 
+  const transaction = db.transaction('products', 'readwrite')
+  
+  //get the store you want to interact with
+  const productStore = transaction.objectStore('products')
+    
+  //Then we add the record as a dict as shown below
+  let record = {id: 'p1', title: 'A first product', price: 12.99, tags: ['Expensive', 'Luxury']}
+  productStore.add(record)
+}
+  
+
+dbRequest.onerror = function(event){ console.log('Error !')}
+
+Note if database does not exist it will create it otherwise just open a connection
 
 %%%%% 
  END
