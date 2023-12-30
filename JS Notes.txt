@@ -5022,6 +5022,28 @@ function retrieveFromIndexedDb(){
 
 Note if database does not exist it will create it otherwise just open a connection
 
+################
+Browser support 
+
+In the application that we build would like to ensure it works on most of the browsers
+For that we should consider checking MDN browser support section for various JS features we use
+and this also applies for third party packages
+
+Another place where you can lookup is https://www.caniuse.com
+
+#########
+Polyfill 
+
+A pollyfill is a third party pakage which adds a functionality which otherwise might be missing in a browser
+
+##############
+Transpilation
+
+Convert modern code to older code. Third-pary tools like Babel convert your code with code that works on older browsers as well
+Eg modern code which uses let and const and arrow functions can be transpiled to used var and normal function
+
+we can tell babel which browsers we want to support in package.json of the project as follows:
+"browserslist": ">2%" // To support broswers with market share more than 2%
 %%%%% 
  END
 %%%%%
