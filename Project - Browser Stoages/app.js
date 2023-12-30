@@ -94,4 +94,16 @@ retrBtnCookie.addEventListener("click", () => {
   c.map((k) => (data[k[0]] = k[1]));
   console.log("Cookie data dict is ", data);
 });
-retrBtnIndexedDb.addEventListener("click", () => {});
+retrBtnIndexedDb.addEventListener("click", () => {
+  let dbRequest = indexedDB.open("StorageDummy", 1);
+  dbRequest.onsuccess = function (event) {
+    let db = event.target.result;
+    const transaction = db.transaction("products", "readwrite");
+
+    const productStore = transaction.objectStore("products");
+    const request = productStore.get("p2");
+    request.onsuccess = function () {
+      console.log("result ", request.result);
+    };
+  };
+});
