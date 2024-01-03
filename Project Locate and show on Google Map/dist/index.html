@@ -1,24 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Share a Place</title>
     <link rel="stylesheet" href="assets/styles/app.css" />
     <link rel="stylesheet" href="assets/styles/share-place.css" />
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=<API_KEY>"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDetPTBAi9UxLy_v0kh98e-9vJoKfm8oRM"
       async
       defer
     ></script>
     <script src="assets/scripts/SharePlace.js" defer></script>
   </head>
   <body>
+    <!-- Template for modal -->
     <template id="modal-template">
       <div class="backdrop"></div>
       <div class="modal"></div>
     </template>
+
+    <!-- Template for modal content -->
     <template id="loading-modal-content">
       <div class="modal__content centered">
         <div class="lds-dual-ring"></div>
@@ -29,6 +28,7 @@
       <h1>Share a Place!</h1>
     </header>
 
+    <!-- Section to show map -->
     <section id="selected-place">
       <div id="map">
         <p>
@@ -38,6 +38,7 @@
       </div>
     </section>
 
+    <!-- Section for sharing -->
     <section id="share-controls">
       <input
         id="share-link"
@@ -48,6 +49,7 @@
       <button id="share-btn" disabled>Share Place</button>
     </section>
 
+    <!-- Section to find address and get current location -->
     <section id="place-data">
       <form>
         <label for="address">Address</label>
