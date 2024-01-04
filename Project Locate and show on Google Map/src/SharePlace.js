@@ -61,9 +61,15 @@ class PlaceFinder {
           lat: successResult.coords.latitude,
           lng: successResult.coords.longitude,
         };
-        const address = await getAddressFromCoords(coordinates);
-        modal.hide();
-        this.selectPlace(coordinates, address);
+        let address;
+        try {
+          address = await getAddressFromCoords(coordinates);
+          modal.hide();
+          this.selectPlace(coordinates, address);
+        } catch (err) {
+          console.log("Error getting address from coordinates ", err);
+          modal.hide();
+        }
       },
       (error) => {
         modal.hide();
