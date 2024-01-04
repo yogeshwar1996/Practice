@@ -64,12 +64,11 @@ class PlaceFinder {
         let address;
         try {
           address = await getAddressFromCoords(coordinates);
-          modal.hide();
           this.selectPlace(coordinates, address);
         } catch (err) {
           console.log("Error getting address from coordinates ", err);
-          modal.hide();
         }
+        modal.hide();
       },
       (error) => {
         modal.hide();
