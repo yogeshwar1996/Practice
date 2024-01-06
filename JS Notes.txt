@@ -284,6 +284,11 @@ for (const key in obj) {
   console.log(obj[key])
 }
 
+Method3.1
+for (const [key, value]  of Object.entries({name:'Yogi', age:10})){
+    console.log(key, value)
+}
+
 Method4
 isValid = true;
 while(isValid) {
@@ -5166,6 +5171,201 @@ navigator.clipboard.writeText(<text>).then(()=> {alert('Copied text to clipboard
 Say if you want to copy some text user has filled in an input
 const inputText  = document.getElementById(<input-element-id>).value
 navigator.clipboard.writeText(inputText).then(()=> {alert('Copied text to clipboard')}).catch();
+
+
+#######
+Symbols
+-------
+* They are primitive values. They are neither objects nor reference values
+* There are built in symbols and one can also build symbols 
+* One can use symbols as keys in an Object ie as a Object property identifier
+* Symbols are guaranteed to be unique and immutable
+* Symbols are not enumerable in for...in loops or Object.keys()
+
+Use case:
+Symbols are often used to create private or hidden properties in objects
+
+Usage:
+------
+// Creating a symbol
+const mySymbol = Symbol();
+
+// Symbols can also have a description which is optional
+const name = Symbol('username');
+
+Using as a key in object:
+--------------------------
+const name = Symbol('username');
+
+const sampleObject = {'age': 20};
+sampleObject[name] = 'Yogeshwar';  
+or 
+const sampleObject = {
+  [name]: 'Yogeshwar',
+  'age': 20
+}
+
+console.log(sampleObject[name]);  // Yogeshwar
+console.log(sampleObject) // {Symbol('username') : 'Yogeshwar', 'age': 20}
+
+Iterating an object which has symbols
+------------------------------------
+for (let key in sampleObject){
+  console.log(key) // Output: Only 'age' will be printed and symbol will not
+}
+
+Checking keys of object containing symbols
+--------------------------------------------
+Object.keys(sampleObject) // Output: ['age']
+sampleObject.hasOwnProperty(name) // true
+Object.getOwnPropertySymbols(sampleObject) //[Symbol('username')]
+
+Note:
+Symbols are always unique, even if they have the same description:
+
+const symbol1 = Symbol('mySymbol');
+const symbol2 = Symbol('mySymbol');
+
+console.log(symbol1 === symbol2);  // false
+
+Note:
+Symbols are immuatable
+
+const name = Symbol('username');
+
+// Attempting to modify the symbol
+// This will result in an error
+name = Symbol('fullUserName'); 
+
+
+// coercion does not work, following will error out saying cannot convert a Symbol value to a string
+const result = name + 'extra'; 
+
+console.log(symbolString);  // "[object Symbol]"
+The combination of these characteristics makes symbols immutable in practice. Their immutability is an essential feature that allows them to serve specific use cases, such as creating unique keys for object properties, ensuring privacy in object structures, and maintaining a stable identity throughout the program execution.
+
+
+#########
+Iterators
+
+Iterator is an object which has a next method which then in turn returns result of a certain structure
+
+Creating an iterator
+* Its an object
+* It has a next method
+* when next is executed it return an object with keys value, done 
+* It has a iterator index
+* If iterator index can fetch from the iterable we return the item in value and done as false
+  else we return the index in the value and done as true
+
+let employeeIterator =  {
+  employees: ['Ajay','Vijay','Veer','Sooraj'],
+  currentEmployeeIndex: 0,
+  next: function () {  
+    if (this.currentEmployeeIndex < this.employees.length ){
+        let item =  {value: this.employees[this.currentEmployeeIndex], done: false};
+        this.currentEmployeeIndex++;
+        return item;
+
+    }
+    else {
+      return {value: this.currentEmployeeIndex, done: true};
+    }
+  }
+}
+
+To iterate using this iterator
+
+let employee  = employeeIterator.next()
+while(!employee.done){
+  console.log(employee.value)
+  employee = employeeIterator.next()
+}
+
+#########
+Generator
+
+They are Js functions which build us an iterator object
+The iterator we have defined above is partially done
+It works with the while loop but we still cannot use it as for(const employee of employeeIterator)
+
+In order to do that we need to have an iterator symbol in the employeeIterator object 
+which should have a generator function as shown below
+
+Note: when defining generator function we add * to the function keyword
+declaring it as function* followed by function name
+and in that function we iterate over the object and instead of returning we yield the value
+
+let employeeIterator =  {
+  employees: ['Ajay','Vijay','Veer','Sooraj'],
+  currentEmployeeIndex: 0,
+  next: function () {  
+    if (this.currentEmployeeIndex < this.employees.length ){
+        let item =  {value: this.employees[this.currentEmployeeIndex], done: false};
+        this.currentEmployeeIndex++;
+        return item;
+
+    }
+    else {
+      return {value: this.currentEmployeeIndex, done: true};
+    }
+  },
+  [Symbol.iterator]: function* employeeGenerator(){
+    let employee = employeeIterator.next()
+    while(!employee.done) {
+      yield employee.value
+      employee = employeeIterator.next()
+    }
+  }
+}
+
+Now if you iterate using for loop as follows it will work
+
+for(const item of employeeIterator){
+  console.log(item) //Output: Ajay Vijay Veer Sooraj
+}
+
+Optimizing the above iterator
+-------------------------------
+
+Note we dont need to define the next method separately and call it inside our generator
+rather generator function will automatically generate a next method of for us
+
+
+let employeeIterator =  {
+  employees: ['Ajay','Vijay','Veer','Sooraj'],
+  [Symbol.iterator]: function* employeeGenerator(){
+    let currentEmployeeIndex = 0
+    while(currentEmployeeIndex < this.employees.length) {
+      yield this.employees[currentEmployeeIndex]
+      currentEmployeeIndex++
+    }
+  }
+}
+
+Now if you iterate using for loop as follows it will work
+
+for(const item of employeeIterator){
+  console.log(item) //Output: Ajay Vijay Veer Sooraj
+}
+
+Debugging generator function: we can define the generator function to be a normal named function
+and check that generator function returns an iterator object which has a next method as follows
+
+let employeeIterator =  {
+  employees: ['Ajay','Vijay','Veer','Sooraj'],
+  employeeGenerator: function* (){
+    let currentEmployeeIndex = 0
+    while(currentEmployeeIndex < this.employees.length) {
+      yield this.employees[currentEmployeeIndex]
+      currentEmployeeIndex++
+    }
+  }
+}
+
+So you can now check that following will ouput Ajay
+console.log(employeeIterator.employeeGenerator().next())
+
 
 %%%%% 
  END
