@@ -5325,6 +5325,7 @@ for(const item of employeeIterator){
   console.log(item) //Output: Ajay Vijay Veer Sooraj
 }
 
+
 Optimizing the above iterator
 -------------------------------
 
@@ -5366,6 +5367,9 @@ let employeeIterator =  {
 So you can now check that following will ouput Ajay
 console.log(employeeIterator.employeeGenerator().next())
 
+Note: 
+Apart from for and while loop we can also use iterator with spread operator to generate an array of values as follows
+console.log([...employeeIterator]) // ['Ajay','Vijay','Veer','Sooraj']
 
 %%%%% 
  END
