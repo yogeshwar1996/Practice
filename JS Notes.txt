@@ -5371,7 +5371,115 @@ Note:
 Apart from for and while loop we can also use iterator with spread operator to generate an array of values as follows
 console.log([...employeeIterator]) // ['Ajay','Vijay','Veer','Sooraj']
 
-%%%%% 
+
+#####
+Proxy
+In Js you can create proxy objects with which you can intercept and customize various operations on that object
+
+Example:
+//Consider the following object
+let course = {
+  name: 'JS Complete Guide',
+  presentor: 'Max',
+  startingDate: '01-02-2022'
+}
+
+// To create a proxy of an object we can create an instance of Proxy using new keyword
+// and pass the object whose proxy we want to create and an object in which 
+// we can define the how that object is managed
+
+let cousrseHandler = {
+  get: function(object, property) {
+    console.log("Accessing property ", property)
+
+    //Check if property does not exist
+    if (!object.hasOwnProperty(property)){      
+      /* Either throw error as follows
+      throw 'Error property not found'
+      or return a default message */
+      return 'NOT FOUND'
+    
+    }
+    return object[property]
+  },
+  set: function(object, property, value){
+    console.log("Updating property ", property)
+
+    //Do not update readonly properties
+    let readOnlyProperties = ['startingDate']
+    if(readOnlyProperties.includes(property)){
+      return
+    }
+    object[property] = value
+  }
+}
+let courseProxy = new Proxy(course, cousrseHandler)
+
+
+#####################
+Running Js in NodeJs
+
+
+// create a js file say app.js
+console.log('Hello! There')
+
+// in terminal execute
+node app.js
+
+
+#######################
+Writing to a file in JS
+
+app.js
+const fs = require('fs')
+fs.writeFile('output.txt', 'Hi I am Yogeshwar.', error => {
+  console.log(error)
+})
+
+It creates a file if it does not exists and overrides its content with the text passed
+If you want to append data to the file then
+
+fs.appendFile('output.txt', 'I am an engineer.', error => {
+  console.log(error)
+})
+
+
+#######################
+Reading  a file in JS
+
+const fs = require('fs')
+fs.readFile('output.txt', (error, data) => {
+  console.log('Error ', error)
+  console.log('Data ', data)
+
+})
+
+
+####################
+Creating HTTP server
+
+// In a file server.js
+const http = require("http");
+
+const server = http.createServer((request, response) => {
+  response.write("Hello World!");
+  response.end();
+});
+
+server.listen(3000);
+
+// In terminal execute 
+node server.js
+
+Now in browser goto localhost:3000
+
+Note: we can also return html in response as follows
+response.setHeader('Content-Type','text/html') // this will tell browser to render the content as HTML
+response.write("<h1>Hello World!</h1>");
+
+
+##########
+
  END
 %%%%%
 
