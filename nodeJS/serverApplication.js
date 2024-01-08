@@ -10,13 +10,12 @@ const server = http.createServer((request, response) => {
   request.on("end", () => {
     body = Buffer.concat(body).toString();
     console.log("Body: ", body);
+    response.setHeader("Content-Type", "text/html");
+    response.write(
+      "<form method='POST' action='/form'><input name='inputValue'><button type='submit'> Submit </button></form>"
+    );
+    response.end();
   });
-
-  response.setHeader("Content-Type", "text/html");
-  response.write(
-    "<form method='POST' action='/form'><input name='inputValue'><button type='submit'> Submit </button></form>"
-  );
-  response.end();
 });
 
 server.listen(3000);

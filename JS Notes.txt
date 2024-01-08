@@ -5462,10 +5462,11 @@ Creating HTTP server
 const http = require("http");
 
 const server = http.createServer((request, response) => {
-  response.write("Hello World!");
-  response.end();
+  response.write("Hello World!"); // add data to response using write()
+  response.end(); //reponse finishes and is send back when end() is called
 });
 
+//configure server to listen at port 3000
 server.listen(3000);
 
 // In terminal execute 
@@ -5476,7 +5477,39 @@ Now in browser goto localhost:3000
 Note: we can also return html in response as follows
 response.setHeader('Content-Type','text/html') // this will tell browser to render the content as HTML
 response.write("<h1>Hello World!</h1>");
+response.end()
 
+Handling requests
+------------------
+Data in requests comes in chunks and you collect it in an array inside by using 
+request.on(event, eventHandler) as follows
+
+request.on("data", (chunk) => {
+    console.log(chunk.toString());
+    body.push(chunk);
+  });
+
+Once the request ends you can convert the data collected from request to a buffer from which you convert it to a string
+Then you generate the response as follows
+
+request.on("end", () => {
+  body = Buffer.concat(body).toString();
+  console.log("Body: ", body);
+  response.setHeader("Content-Type", "text/html");
+  response.write(
+    "<form method='POST' action='/form'><input name='inputValue'><button type='submit'> Submit </button></form>"
+  );
+  response.end();
+});
+
+########
+Security
+
+* XSS Cross site scripting attack - in this malicious JS code in injected to the application and executed.
+Malicious code might 
+- read the localStorage of the user and send that to some server.
+- send requests to certain domains via your application with the right CORS headers.
+- be gathering information of all the users visiting your page.
 
 ##########
 
