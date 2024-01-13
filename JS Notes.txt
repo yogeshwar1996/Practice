@@ -4944,8 +4944,8 @@ const uDetails = JSON.parse(localStorage.getItem('userDetails'))
 Sesstion Storage
 
 Usage
-sessionStorage.saveItem('name', 'Yogeshwar')
-sessionStorage.saveItem('id', 100)
+sessionStorage.setItem('name', 'Yogeshwar')
+sessionStorage.setItem('id', 100)
 
 To save a dict we need to convert it to JSON
 const userDetails = {
@@ -5512,6 +5512,47 @@ Malicious code might
 - be gathering information of all the users visiting your page.
 
 ##########
+Deployment
+
+
+Lifecycle of an application can be represented as follows
+Develop code > Test > Optimize > Build for production > Deployment
+
+There are three major types of web applications:
+
+* Static Websites (just HTML + CSS + JS)
+
+* Single-Page-Applications (SPAs, HTML + CSS + JS with only one HTML page being served, client-side JS is used to re-render the page dynamically)
+
+* Dynamic/ Server-side rendered Web Applications: Websites where the HTML pages are created dynamically on the server (e.g. via templating engines like EJS).
+
+Deploying static website with no server side code
+-------------------------------------------------
+
+Using firebase
+npm install -g firebase-tools
+firebase init
+ - Configure and deploy firebase hosting site
+ - create a project
+firebase deploy
+
+Deploying Dynamic/ Server-side rendered Web Applications
+--------------------------------------------------------
+Using Heroku
+
+Login > Create new app > App name
+Deployment Method : Heroku Git
+Install Heroku CLI
+On terminal > heroku Login
+
+Cofigure git repo new or exising using heroku command:
+heroku git:remote -a <application-name>
+Then
+git push heroku master
+
+Note: package.json should have script> {"start": "node app.js"}
+
+
 
  END
 %%%%%

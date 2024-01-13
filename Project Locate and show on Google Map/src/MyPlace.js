@@ -11,6 +11,12 @@ class ShowMyLocation {
   }
 }
 
+const googleAPIKey = localStorage.getItem("googleAPIKey");
+const script = document.createElement("script");
+script.src = `https://maps.googleapis.com/maps/api/js?key=${googleAPIKey}`;
+document.head.append(script);
+
+script.onload = function () {
 // We can acccesss URL using location.href and create a URL object
 const url = new URL(location.href);
 const queryParams = url.searchParams;
@@ -21,3 +27,5 @@ const coordinates = {
 const address = queryParams.get("address");
 //coordinates and address are present in the URL
 new ShowMyLocation(coordinates, address);
+
+}

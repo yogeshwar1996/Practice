@@ -3,11 +3,14 @@
     <title>Share a Place</title>
     <link rel="stylesheet" href="assets/styles/app.css" />
     <link rel="stylesheet" href="assets/styles/share-place.css" />
-    <script
-      src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_API_KEY"
+    <!-- <script
+      src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_MAP_API_KEY"
       defer
-    ></script>
+    ></script> -->
+    <!-- For local -->
     <script src="assets/scripts/SharePlace.js" defer></script>
+    <!-- For production -->
+    <!-- <script src="assets/scripts/share-place.33f5ca26cf77e160831f.js" defer></script> -->
   </head>
   <body>
     <!-- Template for modal -->
@@ -36,7 +39,12 @@
         </p>
       </div>
     </section>
-
+    <section id="google-map-key">
+      <input id="google-map-api-key-input"
+        type="text"
+        placeholder="Enter your google map API key">
+      <button id="google-map-api-key-submission-btn" disabled>Submit Key</button>
+    </section>
     <!-- Section for sharing -->
     <section id="share-controls">
       <input
@@ -52,7 +60,7 @@
     <section id="place-data">
       <form>
         <label for="address">Address</label>
-        <input type="text" />
+        <input id="address-input" type="text" />
         <button type="submit">Find Place</button>
       </form>
       <button id="locate-btn">Get Current Location</button>

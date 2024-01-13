@@ -1,6 +1,6 @@
-const GOOGLE_API_KEY = "GOOGLE_MAP_KEY";
 
 export async function getAddressFromCoords(coords) {
+  const GOOGLE_API_KEY = localStorage.getItem("googleAPIKey");
   const response = await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?latlng=${coords.lat},${coords.lng}&key=${GOOGLE_API_KEY}`
   );
@@ -16,6 +16,7 @@ export async function getAddressFromCoords(coords) {
 }
 
 export async function getCoordsFromAddress(address) {
+  const GOOGLE_API_KEY = localStorage.getItem("googleAPIKey");
   const urlAddress = encodeURI(address);
   const response = await fetch(
     `https://maps.googleapis.com/maps/api/geocode/json?address=${urlAddress}&key=${GOOGLE_API_KEY}`

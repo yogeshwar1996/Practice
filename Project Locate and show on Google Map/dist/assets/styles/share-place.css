@@ -40,6 +40,15 @@ input:focus {
   align-items: center;
 }
 
+#google-map-key {
+  width: 40rem;
+  max-width: 90%;
+  margin: 2rem auto;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  text-align: center;
+}
+
 #share-controls {
   width: 40rem;
   max-width: 90%;
@@ -49,6 +58,9 @@ input:focus {
   text-align: center;
 }
 
+#google-map-key input {
+  font-size: 1.15rem;
+}
 #share-controls input {
   font-size: 1.15rem;
 }

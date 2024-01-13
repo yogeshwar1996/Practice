@@ -5,13 +5,30 @@ import { getCoordsFromAddress, getAddressFromCoords } from "./Utility/Location";
 class PlaceFinder {
   constructor() {
     const addressForm = document.querySelector("form");
+    this.addressInput = document.getElementById("address-input");
     const locateUserBtn = document.getElementById("locate-btn");
     this.shareBtn = document.getElementById("share-btn");
+    this.googleAPIKeyButton = document.getElementById("google-map-api-key-submission-btn");
     this.sharedLinkInputElement = document.getElementById("share-link");
-
+    this.googleAPIKeyInputElement = document.getElementById("google-map-api-key-input");
     locateUserBtn.addEventListener("click", this.locateUserHandler.bind(this));
     this.shareBtn.addEventListener("click", this.sharePlaceHandler.bind(this));
     addressForm.addEventListener("submit", this.findAddressHandler.bind(this));
+    this.googleAPIKeyInputElement.addEventListener("input", () => {
+      const googleAPIKey = this.googleAPIKeyInputElement.value;
+      if (googleAPIKey && googleAPIKey.trim().length > 0) {
+        this.googleAPIKeyButton.disabled = false;
+      }else{
+        this.googleAPIKeyButton.disabled = true;
+      }
+    });
+    this.googleAPIKeyButton.addEventListener("click", () => {
+      const googleAPIKey = this.googleAPIKeyInputElement.value;
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${googleAPIKey}`;
+      document.head.append(script);
+      localStorage.setItem('googleAPIKey', googleAPIKey)
+    });
   }
 
   selectPlace(coordinates, address) {
@@ -64,6 +81,7 @@ class PlaceFinder {
         let address;
         try {
           address = await getAddressFromCoords(coordinates);
+          this.addressInput.value = address;
           this.selectPlace(coordinates, address);
         } catch (err) {
           console.log("Error getting address from coordinates ", err);
@@ -101,4 +119,12 @@ class PlaceFinder {
   }
 }
 
-const placeFinder = new PlaceFinder();
+const googleAPIKey = localStorage.getItem("googleAPIKey");
+const script = document.createElement("script");
+script.src = `https://maps.googleapis.com/maps/api/js?key=${googleAPIKey}`;
+document.head.append(script);
+
+script.onload = function () {
+  console.log("Google Script loaded for Shareplace.js")
+  const placeFinder = new PlaceFinder();
+}
