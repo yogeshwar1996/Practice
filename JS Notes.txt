@@ -5552,6 +5552,59 @@ git push heroku master
 
 Note: package.json should have script> {"start": "node app.js"}
 
+#########################
+Performance Optimisation
+
+Performance can be measured as follows: 
+  Startup Performace - 
+    How long does it takes to see something on the screen?
+    How quickly is a user able to interact with the page?
+  Runtime Performance - 
+    How smooth does the application run (are there freezes or lags)?
+    How smooth do animations play, is ther any visual lag?
+    Are there any memory leaks, is the page getting slower over time?
+
+  Factors and thier affects
+
+  - Bundle/Script size : Delays inital parsing/execution
+  - Number of HTTP roundtrips (eg because of non bundled code, third party library CDNs): Delays initial parsing/execution
+  - Un-necessary code execution, DOM operations/repaints: slow down the execution
+  - Memory leaks - Can crash your application
+
+  Optimisations
+  Find code alternatives for high frequency code parts
+  Micro Optimisations: Use better data structures
+
+
+  Ways to measure - 
+  Check roundtrips + bundle/script sizes, set budgets for them
+  Use devtools
+  performance.now() - add this to your code during development/testing and check the execution time differences for certain operations
+  jsperf.com  -  to benchmark code alternatives
+
+######################
+Broadcast API to communicate between different tabs open for same Websites
+1. Create a Broadcast Channel
+2. Use channel.postMessage(data); to send data from one tab to the channel.
+3. Use channel.onmessage to listen for incoming messages in another tab.
+4. Handle the received data in the event handler.
+
+const channel = new BroadcastChannel('myChannel');
+
+// Send data from one tab
+function sendDataToOtherTab() {
+    const data = { message: 'Hello from Tab 1!' };
+    channel.postMessage(data);
+}
+
+// Receive data in another tab
+channel.onmessage = (event) => {
+    const receivedData = event.data;
+    console.log('Data received in Tab 2:', receivedData.message);
+};
+
+
+
 
 
  END
