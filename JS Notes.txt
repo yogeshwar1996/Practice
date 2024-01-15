@@ -5603,7 +5603,9 @@ channel.onmessage = (event) => {
     console.log('Data received in Tab 2:', receivedData.message);
 };
 
-
+#####################
+Optimisation know how
+https://web.dev/articles/optimize-javascript-execution
 
 
 
@@ -5613,4 +5615,4 @@ channel.onmessage = (event) => {
 Useful links
 HTML, CSS, JS, Webforms, Accessibility, Performance, Tools and testing
 https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web
-
+https://developer.chrome.com/docs/devtools/
