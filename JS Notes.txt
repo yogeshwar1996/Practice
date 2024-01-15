@@ -5608,6 +5608,13 @@ Optimisation know how
 https://web.dev/articles/optimize-javascript-execution
 
 
+#############
+Testing in JS
+
+Testing setup involves three things
+- Test runner which executes tests and summarizes results (eg Jest)
+- Assertion library they give tools to define testing logic and conditions (eg Jest)
+- Headless browser to simulate browser interaction
 
  END
 %%%%%
