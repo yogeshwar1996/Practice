@@ -5616,6 +5616,9 @@ Testing setup involves three things
 - Assertion library they give tools to define testing logic and conditions (eg Jest)
 - Headless browser to simulate browser interaction
 
+
+NOTE: Jest automatically uses mocks of node module packages defined in __mocks__ folder
+we dont need to instruct it to use them
  END
 %%%%%
 
