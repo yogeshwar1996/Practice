@@ -5607,6 +5607,12 @@ channel.onmessage = (event) => {
 Optimisation know how
 https://web.dev/articles/optimize-javascript-execution
 
+Topics covered
+How to use throttling
+How to use capture performace and analyse performance report with screenshots and how to detect memory leaks
+Checking code coverage
+How to take memory heap snapshots and perform comparison
+
 
 #############
 Testing in JS
@@ -5619,6 +5625,23 @@ Testing setup involves three things
 
 NOTE: Jest automatically uses mocks of node module packages defined in __mocks__ folder
 we dont need to instruct it to use them
+
+Topics covered
+* Use jest for unit and integration tests and puppeteer for e2e (end to end) tests
+* Mocking async code in JS
+
+####################
+Programming Paradigm
+
+It a way of writting/organizing your code
+
+Object oriented - Here you organize data and logic in objects (properties + methods). Objects can be seen as a logical entity
+Procedural - Here you write sequential series of execution steps
+Functional - Here we organize code in pure functions (ones without side effects)with clearly defined tasks.Pass data around via parameters.
+
+* Pure functions = The function returns the same value for the same arguments, without variation due to local, static, non-local variables,
+mutable reference arguments, or input streams
+
  END
 %%%%%
 
