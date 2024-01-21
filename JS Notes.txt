@@ -1579,7 +1579,7 @@ Object.getOwnPropertyDescriptors(<obj>)
 
 
 ###############
-this keyword                 Bookmark: #thisKeyword
+this keyword   
 ###############
 Inside of a function `this` keyword refers to whatever called that function
 No matter that function is part of an Object or not.
@@ -1587,14 +1587,19 @@ No matter that function is part of an Object or not.
 Eg 
 let movie = {
   info: {
-    title: 'Ramayan'
-    rating: 2
-    id: Math.random().toStrin()
+    title: 'Ramayan',
+    rating: 2,
+    id: Math.random().toString(),
     getFormattedTitle:  function (){
-      return this.info.title.toUpperCase()
+      return this.title.toUpperCase()
     }
   }
 }
+
+console.log(movie.info.getFormattedTitle()) // will print 'RAMAYAN'
+This inisde getFormattedTitle refers to what called it, which is `info` in this case
+
+
 Note: every method defined using function keyword has `this` binding which refers to whatever called that function
 but in case of arrow functions `this` keyword inside it does not refers to whats calling it. But the context just outside the arrow function
 
@@ -2172,9 +2177,9 @@ Now the classes ImagePost and VideoPost extend from Post so they have all the pr
 Note if parent class has a constructor and child does not. 
 Then instantiating the class will call constructor on parent class
 
-If constructor is present in both class and its parent class
-the contructor of class executes before parent
-NOTE: One must  call parent's constructor in derived class before accessing 'this' or returning from derived constructor
+If constructor is present in both child class and parent class
+the contructor of child class executes before parent's
+NOTE: One must call parent's constructor in child class before accessing 'this' or returning from child's constructor
 
 class XYZ {
   constructor(arg1) {
@@ -5642,8 +5647,389 @@ Functional - Here we organize code in pure functions (ones without side effects)
 * Pure functions = The function returns the same value for the same arguments, without variation due to local, static, non-local variables,
 mutable reference arguments, or input streams
 
- END
-%%%%%
+##########
+Typescript
+
+Its a superset of Javascript
+TypeScript introduces additional features such as static typing 
+You can write code in typescript in .ts files
+To make TypeScript code compatible with all browsers and environments,
+it undergoes a transpilation process before deployment.
+This process involves using a tool called the TypeScript Compiler (tsc)
+to convert TypeScript source code (.ts files) into standard JavaScript code (.js files). 
+The resulting JavaScript code is then what gets executed in browsers or other JavaScript environments.
+
+To install typescript do: npm install -g typescript
+
+Create a <filename>.ts
+
+Then on terminal do: 
+tsc <filename>.ts 
+or
+tsc <filename>.ts -w  // To run it in watch mode
+It will generate <filename>.js
+
+Then run that using: node  <filename>.js
+
+
+Typescript also has a feature of type inferencing where
+when we say 
+function add(num1: number, num2: number){
+  return num1 + num2
+}
+const result = add(2,4)
+
+It infers the type of result is also a number so we may not mention that explicitly
+In the above logic the type script also infers the return type of the add function
+which otherwise can be explicitly defined as follows
+function add(num1: number, num2: number): number {
+  return num1 + num2
+}
+
+If a function does not return anything we should set return type to void for example
+function printResult(result: string): void {
+  console.log("Result is ", result)
+}
+
+Typecasting in typescript 
+------------------------
+Typecasting also known as Type conversion or type coercion, is the process of changing a value from one data type to another.
+Its a way to tell the TypeScript compiler that you know more about the type of a value than it does
+When we get an element by id type script will not be able to infer what element it is. 
+If we do ->
+  const inputElement:HTMLInputElement = docuement.getElementById('name-input') 
+So the above code will still not work as here we are saying we expect  inputElement to be a HTMLInputElement
+But we cannot be sure what docuement.getElementById() will return
+So we can define it as follows ->
+  const inputElement = docuement.getElementById('name-input') as HTMLInputElement
+
+
+Defining type for objects
+--------------------------
+let column_info : {name: string, id: string, type: string};
+
+//Following will work 
+column_info = {name: "City", id: "column_city", type: "TEXT"};
+
+//Following will not work because age is extra
+column_info = {name: "City", id: "column_city", type: "TEXT", age: 10};
+
+//Following will not work because property `id ` is missing from the object
+column_info = {name: "City",  type: "TEXT"};
+
+Defining type for function on an object
+---------------------------------------
+
+let column_info: {
+  name: string,
+  id: string,
+  type: string,
+  printName: () => void
+}
+
+column_info = { 
+  name: 'City',
+  id: 'column_city',
+  type: 'TEXT',
+  printName: function() {
+    console.log("column name: ", this.name)
+  }
+
+}
+
+Using type alias
+----------------
+As we can see the type info the column_info variable is big as it has many properties.
+We can write it neatly by defining a type alias for this as follows:
+
+type ColumnInfo = {
+  name: string,
+  id: string,
+  type: string,
+  printName: () => void
+}
+
+let column_info: ColumnInfo = { 
+  name: 'City',
+  id: 'column_city',
+  type: 'TEXT',
+  printName: function() {
+    console.log("column name: ", this.name)
+  }
+}
+
+
+Defining type for array
+------------------------
+// Below we restrict array to have objects of type ColumnInfo
+let metadata ColumnInfo[] ;
+metadata = []
+metadata.push(column_info) // will  work
+metadtaa.push("Hello") // will not work
+
+Literal type
+------------
+In TypeScript, literal types allow you to specify exact values that a variable can have. 
+let color: "red" | "green" | "blue";
+color = "red"; // Valid
+color = "green"; // Valid
+color = "yellow"; // Error: Type '"yellow"' is not assignable to type '"red" | "green" | "blue"'.
+
+let numberLiteral: 1 | 2 | 3;
+numberLiteral = 1; // Valid
+numberLiteral = 2; // Valid
+numberLiteral = 4; // Error: Type '4' is not assignable to type '1 | 2 | 3'.
+
+
+Union type
+----------
+In TypeScript, a union type allows a variable to have one of multiple types. 
+You can use the union type to specify that a variable can hold values of different types,
+and TypeScript will automatically infer and enforce the correct types.
+
+let myVariable: string | number;
+
+myVariable = "Hello, TypeScript"; // Valid
+myVariable = 42; // Valid
+myVariable = true; // Error: Type 'boolean' is not assignable to type 'string | number'.
+
+Enum type
+----------
+In TypeScript, an enum (enumeration) is a way to define a set of named constant values. 
+enum Direction {
+  Up,
+  Down,
+  Left,
+  Right
+}
+
+let myDirection: Direction = Direction.Up;
+console.log(myDirection); // Outputs: 0
+
+In this example, Direction is an enum with four members: Up, Down, Left, and Right.
+
+By default, the values of the enum members are assigned numeric values starting from 0.
+You can also explicitly set the values:
+
+enum Direction {
+  Up = 1,
+  Down = 2,
+  Left = 3,
+  Right = 4
+}
+
+You can use enums with string values as well
+enum Color {
+  Red = "RED",
+  Green = "GREEN",
+  Blue = "BLUE"
+}
+
+let myColor: Color = Color.Red;
+console.log(myColor); // Outputs: "RED"
+
+##############################
+Defining classes in typescript
+
+class User {
+  userName: string; //defininig fields and their types is necessary
+  private userAge: number; // we can optionally also add access modifiers for example the keyword private ensures that this field is accessible only within the class
+
+  constructor(name: string, age: number){
+    this.userName = name;
+    this.userAge = age;
+  }
+}
+
+let user = new User('Yogi',27)
+console.log(user.userName) // will print 'Yogi'
+console.log(user.userAge)  // this will give error as userAge is private
+
+Shorthand syntax for class properties 
+-------------------------------------
+class UserClass {
+  constructor(public name: string, private age: number){}
+}
+
+This will automatically create the fields name and age on the class and apply access modifiers on them
+Note :Here it is necessary to define access modifiers  for the constructor's params
+
+################
+Interfaces in TS
+
+An interface is a way to define a contract for the shape of an object.
+It allows you to declare the structure of an object, specifying the types of its properties and methods.
+
+For example we previously defined type for ColumnInfo as follows
+
+type ColumnInfo = {
+  name: string,
+  id: string,
+  type: string,
+  printName: () => void
+}
+
+let column_info: ColumnInfo = { 
+  name: 'City',
+  id: 'column_city',
+  type: 'TEXT',
+  printName: function() {
+    console.log("column name: ", this.name)
+  }
+}
+
+We can redo it with interface as follows:
+
+interface ColumnInfoContainer {
+  name: string,
+  id: string,
+  type: string,
+  printName: () => void
+}
+
+type ColumnInfo = ColumnInfoContainer
+type Metadata = ColumnInfoContainer[]
+
+let column_info: ColumnInfo = { 
+  name: 'City',
+  id: 'column_city',
+  type: 'TEXT',
+  printName: function() {
+    console.log("column name: ", this.name)
+  }
+}
+let metadata: Metadata = []
+metadata.push(column_info)
+
+Using interface with class
+-------------------------
+interface Person {
+  firstName: string;
+  lastName: string;
+  age?: number; // Optional property
+  sayHello: () => void; // Method signature
+}
+
+// Implementing the interface
+class Student implements Person {
+  
+  constructor(public firstName: string, public lastName: string) {
+  }
+
+  sayHello() {
+    console.log(`Hello, my name is ${this.firstName} ${this.lastName}.`);
+  }
+}
+
+The class that implments the interface must have all the properties of interface and can have additional properties as well 
+
+Class implementing multiple Interfaces
+--------------------------------------
+interface Greetable {
+  name: string;
+}
+interface Printable {
+  printInfo: () => void;
+}
+
+class User implements Greetable, Printable { // It ensures the class should have a name property and a printInfo method
+  constructor(public name: string, public age: number) {}
+  printInfo() {
+    console.log("Name is", this.name, ' and age is ', this.age);
+  }
+}
+
+let user = new User("Max",20);
+user.printInfo();
+
+
+Generic Types
+-------------
+
+Lets say we define an object which will store an array as follows
+
+let numbers = []
+numbers.push(1) 
+
+Typescript will give errors as we have not defined what we expect in numbers
+so we can tell that as follows
+
+let numbers: [] = []
+numbers.push(1)
+
+This is still not sufficient and we need to define what are we expecting in an array because array is a generic type
+
+let numbers: any[] = [] // This will tell that we expect numbers to be an array which can have value of any data type
+numbers.push(1)
+
+If we want only strings in array we can define it as follows:
+let numbers: string[] = []
+
+If we want only strings or numbers in array we can define it as follows:
+let numbers: (string|number)[] = []
+numbers.push(1)
+numbers.push("One")
+
+We want to allow only specific literals and numbers we can do it as follows
+type allowedNumberLiterals = "One"  | "Two"  | "Three"  | "Four"  | "Five"  | "Six"  | "Seven"  | "Eight"  | "Nine";
+let numbers: (number | allowedNumberLiterals)[] = [];
+numbers.push(1);
+numbers.push("Seven");
+console.log(numbers);
+
+Note:
+let numbers: string[] = []
+can also be written as 
+let numbers: Array<string> = []
+
+Another example of generic type is Promise in HTTP request
+Promise returns data when it gets resolved but we need to tell what type of data it is.
+
+Generic functions
+-----------------
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+Here we mention <T> after function name that means when calling this function the caller will define the type
+Then we use that type as the type of the arg and return type of the function
+
+Usage:
+let result: number = identity<number>(42);
+let value: string = identity<string>("Hello, TypeScript")
+console.log("result", result);
+console.log("value", value);
+
+#############################################################
+Running typescript transpilation on multiple files in project
+
+In your project directory in the terminal do:
+tsc --init
+
+It will create a tsconfig.json file
+
+now we can transpile all .ts file by running
+tsc // or tsc -w
+
+When we do tsc init the tsconfig.json list the options being set for the transpilation where we can configure which javascript version 
+we want for emitted JavaScript
+
+We can also configure what all strictness we want in the type checking
+
+For example in the strict mode when we do 
+
+let button = document.querySelector('#apply-button') //The type script will complain that this button can be null
+
+So we can handle it in following ways
+if(!button) {
+  //do something
+}
+
+or add an exclamation in the end telling the typescript that this will not be null
+let button = document.querySelector('#apply-button')!
+
+END
+%%%
 
 Useful links
 HTML, CSS, JS, Webforms, Accessibility, Performance, Tools and testing
