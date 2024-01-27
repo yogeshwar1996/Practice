@@ -6028,6 +6028,53 @@ if(!button) {
 or add an exclamation in the end telling the typescript that this will not be null
 let button = document.querySelector('#apply-button')!
 
+##############
+Web components
+
+Web Components are a set of web platform APIs that allow you to create reusable custom elements
+with their functionality encapsulated away from the rest of your code. 
+They consist of four main specifications: 
+* Custom Elements - here you register your own HTML element
+* Shadow DOM - here you manage a separate DOM node tree for your HTML element including scoped css styling
+* HTML Templates & slots - here you write HTML templates that you can add to your HTML element at flexible entry points (i.e slots)
+* HTML Imports - for importing HTML files
+
+Types of Webcomponent
+--------------------
+* autonomous - ones which are completely independent of existing HTML elements
+* extended built-in elememts - which improve or modify existing HTML elements
+
+Registering Custom Elements
+----------------------------
+class MyElement extends HTMLElement {
+  constructor() {
+    super();
+    console.log("Its working")
+  }
+}
+
+customElements.define('my-element', MyElement);
+
+When the above logic will execute the element will get created and 
+it will have a lifecycle and we need to be aware of what we can do in various life cycle stages
+
+Webcomponent Lifecycle
+----------------------
+* Stage 1 - Element created
+When object gets created based on our class the element gets created in the memory and 
+constructor gets called where we do basic initialization
+Note: The element is not part of the DOM yet.
+
+* Stage 2 - Element gets attached to DOM
+When this happens the connectedCallback() executes and we can 
+now you can start adding content to the DOM and start accessing the DOM
+
+* Elemenet detached from the DOM
+When this happens the disconnectedCallback() executes. In here you can do the cleanup work
+
+* Change in attribute
+When this happens attributeChangedCallback() executes.
+
 END
 %%%
 

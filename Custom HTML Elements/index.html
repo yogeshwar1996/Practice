@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <title>Custom Element</title>
+    <script src="app.js"></script>
+  </head>
+  <body>
+    <!-- 
+      This template can be removed from index.html and the content can be added in app.js inside the constructor function
+      so that its reusable
+
+      <template id="tooltip-template">
+      <span>(?)</span>
+      <slot
+        >What we write in the slot tag is the fallback text if the custom
+        element is empty i.e nothing between the opening and closing tag of the
+        custom element
+      </slot>
+    </template> 
+    -->
+    <y-tooltip text="Hello world. How are you"> Where are you from</y-tooltip>
+    <br />
+    <y-tooltip
+      text="You forgot to add something in the between the custom component's opening & closing tag"
+    ></y-tooltip>
+  </body>
+</html>
