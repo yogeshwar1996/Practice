@@ -1,4 +1,7 @@
 class ToggleButton extends HTMLElement {
+  #isHidden;
+  #button;
+  #infoEl;
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -13,23 +16,42 @@ class ToggleButton extends HTMLElement {
         <slot></slot>
       </p>
     `;
-    const button = this.shadowRoot.querySelector("button");
-    const infoEl = this.shadowRoot.querySelector("p");
 
-    let isHidden = true;
-    console.log("Button elementin connectedCalleback ", button);
-    button.addEventListener("click", () => {
-      console.log("In  click listner on button with hidden ", isHidden);
-      if (isHidden) {
-        infoEl.style.display = "block";
-        button.textContent = "Hide";
-        isHidden = false;
+    //We can start querying the shadow DOM for elements in the constructor itself
+    this.#button = this.shadowRoot.querySelector("button");
+    this.#infoEl = this.shadowRoot.querySelector("p");
+
+    this.#isHidden = true;
+    console.log("Button elementin connectedCalleback ", this.#button);
+    this.#button.addEventListener("click", () => {
+      console.log("In  click listner on button with hidden ", this.#isHidden);
+      if (this.#isHidden) {
+        this.#infoEl.style.display = "block";
+        this.#button.textContent = "Hide";
+        this.#isHidden = false;
       } else {
-        infoEl.style.display = "none";
-        button.textContent = "Show";
-        isHidden = true;
+        this.#infoEl.style.display = "none";
+        this.#button.textContent = "Show";
+        this.#isHidden = true;
       }
     });
+  }
+  connectedCallback() {
+    if (this.hasAttribute("is-visible")) {
+      if (this.getAttribute("is-visible") === "true") {
+        this.#infoEl.style.display = "block";
+        this.#button.textContent = "Hide";
+        this.#isHidden = false;
+      } else {
+        this.#infoEl.style.display = "none";
+        this.#button.textContent = "Show";
+        this.#isHidden = true;
+      }
+    } else {
+      this.#infoEl.style.display = "none";
+      this.#button.textContent = "Show";
+      this.#isHidden = true;
+    }
   }
 }
 
