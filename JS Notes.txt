@@ -329,7 +329,7 @@ for (let i = 0; i < 10; i++) {
 It will print 0 1 2 3 4 6 7 8 9
 It will skip loop at i == 5
 
-**Using labeled statemnt to break outer loop**
+Using labeled statemnt to break outer loop
 let j = 0;
 
 outerLoop: do {
@@ -4647,67 +4647,67 @@ By using Module Scope Strict, you can write more modular, reusable, and maintain
 ES modules vs commonJS modules
 ###############################
 ES Modules (ESM) and CommonJS (CJS) are two different module systems in JavaScript, each with its own syntax and approach for managing dependencies in an application.
-Here’s a detailed explanation of the differences between **ES Modules (ESM)** and **CommonJS (CJS)** in text form:
+Here’s a detailed explanation of the differences between ES Modules (ESM) and CommonJS (CJS) in text form:
 
-1. **Syntax**:  
-   - **ESM** uses the `import` and `export` keywords to handle modules.  
-   - **CJS** uses `require` to import modules and `module.exports` or `exports` to export them.  
+1. Syntax:  
+   - ESM uses the `import` and `export` keywords to handle modules.  
+   - CJS uses `require` to import modules and `module.exports` or `exports` to export them.  
 
-2. **Execution Timing**:  
-   - **ESM** modules are loaded asynchronously, meaning the code does not block while waiting for the module to load.  
-   - **CJS** modules are loaded synchronously, blocking execution until the module is fully loaded.
+2. Execution Timing:  
+   - ESM modules are loaded asynchronously, meaning the code does not block while waiting for the module to load.  
+   - CJS modules are loaded synchronously, blocking execution until the module is fully loaded.
 
-3. **Scope**:  
-   - **ESM** is always executed in **strict mode**, ensuring better error handling and preventing accidental variable declarations.  
-   - **CJS** does not enforce strict mode by default, although you can enable it manually with `"use strict";`.
+3. Scope:  
+   - ESM is always executed in strict mode, ensuring better error handling and preventing accidental variable declarations.  
+   - CJS does not enforce strict mode by default, although you can enable it manually with `"use strict";`.
 
-4. **Export Types**:  
-   - **ESM** supports both **named exports** (multiple exports per file) and **default exports** (one primary export per file).  
-   - **CJS** primarily uses `module.exports` for default exports. Named exports are supported by adding properties to the `exports` object manually.
+4. Export Types:  
+   - ESM supports both named exports (multiple exports per file) and default exports (one primary export per file).  
+   - CJS primarily uses `module.exports` for default exports. Named exports are supported by adding properties to the `exports` object manually.
 
-5. **Static vs Dynamic Imports**:  
-   - **ESM** imports are **static**, meaning they are resolved at compile time. This allows tools to analyze and optimize code (e.g., tree shaking).  
-   - **CJS** imports are **dynamic**, meaning modules are resolved at runtime. This allows flexibility, like importing modules based on variables.
+5. Static vs Dynamic Imports:  
+   - ESM imports are static, meaning they are resolved at compile time. This allows tools to analyze and optimize code (e.g., tree shaking).  
+   - CJS imports are dynamic, meaning modules are resolved at runtime. This allows flexibility, like importing modules based on variables.
 
-6. **Tree Shaking**:  
-   - **ESM** supports tree shaking, a process where unused code is removed from the final bundle during the build process.  
-   - **CJS** does not support tree shaking due to its dynamic nature, as the exact exports cannot be determined during the build.
+6. Tree Shaking:  
+   - ESM supports tree shaking, a process where unused code is removed from the final bundle during the build process.  
+   - CJS does not support tree shaking due to its dynamic nature, as the exact exports cannot be determined during the build.
 
-7. **Interoperability**:  
-   - **ESM** can import CJS modules, but special handling may be required to access `module.exports`.  
-   - **CJS** can import ESM modules, but the default export is treated as a `default` property on the imported object.
+7. Interoperability:  
+   - ESM can import CJS modules, but special handling may be required to access `module.exports`.  
+   - CJS can import ESM modules, but the default export is treated as a `default` property on the imported object.
 
-8. **Browser Support**:  
-   - **ESM** is natively supported in modern browsers, allowing the use of `<script type="module">` without bundling.  
-   - **CJS** is not supported in browsers unless it is bundled or transpiled.
+8. Browser Support:  
+   - ESM is natively supported in modern browsers, allowing the use of `<script type="module">` without bundling.  
+   - CJS is not supported in browsers unless it is bundled or transpiled.
 
-9. **File Extensions**:  
-   - **ESM** modules commonly use `.mjs` or `.js` (if `"type": "module"` is specified in `package.json`).  
-   - **CJS** modules typically use `.js` or `.cjs` for clarity.
+9. File Extensions:  
+   - ESM modules commonly use `.mjs` or `.js` (if `"type": "module"` is specified in `package.json`).  
+   - CJS modules typically use `.js` or `.cjs` for clarity.
 
-10. **Dependency Management**:  
-   - **ESM** loads dependencies asynchronously, leveraging non-blocking I/O.  
-   - **CJS** loads dependencies synchronously, which can lead to performance issues in large applications.
+10. Dependency Management:  
+   - ESM loads dependencies asynchronously, leveraging non-blocking I/O.  
+   - CJS loads dependencies synchronously, which can lead to performance issues in large applications.
 
-11. **Performance**:  
-   - **ESM** is optimized for performance, especially for large-scale applications, as its asynchronous loading allows parallel operations.  
-   - **CJS** can block the event loop due to its synchronous nature, potentially slowing down large applications.
+11. Performance:  
+   - ESM is optimized for performance, especially for large-scale applications, as its asynchronous loading allows parallel operations.  
+   - CJS can block the event loop due to its synchronous nature, potentially slowing down large applications.
 
-12. **Compatibility**:  
-   - **ESM** is supported in modern browsers and Node.js (from version 14+ with full support in version 16+).  
-   - **CJS** has widespread support in older JavaScript environments and remains the default for many existing Node.js projects.
+12. Compatibility:  
+   - ESM is supported in modern browsers and Node.js (from version 14+ with full support in version 16+).  
+   - CJS has widespread support in older JavaScript environments and remains the default for many existing Node.js projects.
 
-13. **Use Cases**:  
-   - **ESM** is best suited for modern JavaScript applications, especially those targeting browsers or needing advanced optimizations like tree shaking.  
-   - **CJS** is ideal for legacy Node.js projects or environments where synchronous module loading is sufficient.
+13. Use Cases:  
+   - ESM is best suited for modern JavaScript applications, especially those targeting browsers or needing advanced optimizations like tree shaking.  
+   - CJS is ideal for legacy Node.js projects or environments where synchronous module loading is sufficient.
 
-14. **Dynamic Import Support**:  
-   - **ESM** allows dynamic imports via the `import()` function, which returns a promise and loads modules asynchronously.  
-   - **CJS** does not have native support for dynamic imports, but you can mimic this behavior with `require()`.
+14. Dynamic Import Support:  
+   - ESM allows dynamic imports via the `import()` function, which returns a promise and loads modules asynchronously.  
+   - CJS does not have native support for dynamic imports, but you can mimic this behavior with `require()`.
 
-15. **Backward Compatibility**:  
-   - **ESM** has limited backward compatibility with older tools or JavaScript runtimes and may require transpilers like Babel.  
-   - **CJS** is fully compatible with older Node.js environments and tools, making it widely used in legacy codebases.
+15. Backward Compatibility:  
+   - ESM has limited backward compatibility with older tools or JavaScript runtimes and may require transpilers like Babel.  
+   - CJS is fully compatible with older Node.js environments and tools, making it widely used in legacy codebases.
 
 By understanding these differences, you can decide which module system to use based on your project's requirements and compatibility needs.
 
