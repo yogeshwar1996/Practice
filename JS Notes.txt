@@ -5485,9 +5485,13 @@ let course = {
   startingDate: '01-02-2022'
 }
 
-// To create a proxy of an object we can create an instance of Proxy using new keyword
-// and pass the object whose proxy we want to create and an object in which 
-// we can define the how that object is managed
+
+1. create an instance of Proxy using new keyword
+let courseProxy = new Proxy(course, cousrseHandler)
+
+arg1: object whose proxy we want to create 
+arg2: object in which, we can define how that object is managed
+
 
 let cousrseHandler = {
   get: function(object, property) {
@@ -5514,7 +5518,6 @@ let cousrseHandler = {
     object[property] = value
   }
 }
-let courseProxy = new Proxy(course, cousrseHandler)
 
 
 #####################
